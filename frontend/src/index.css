@@ -113,6 +113,21 @@ a {
   color: #1f2430;
 }
 
+.advice-panel .advice-text {
+  white-space: pre-wrap;
+}
+
+.advice-panel .meta {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 form {
   display: flex;
   flex-direction: column;

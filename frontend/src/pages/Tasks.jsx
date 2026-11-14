@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api.js";
+import AdvicePanel from "../components/AdvicePanel.jsx";
 import Navbar from "../components/Navbar.jsx";
 import TaskCard from "../components/TaskCard.jsx";
 
@@ -109,6 +110,8 @@ export default function Tasks() {
             <button type="submit">Tambah Tugas</button>
           </form>
         </div>
+
+        <AdvicePanel />
 
         {tasks.length === 0 && <p>Belum ada tugas. Tambahkan tugas pertama Anda di atas.</p>}
 
