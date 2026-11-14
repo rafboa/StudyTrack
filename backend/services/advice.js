@@ -71,7 +71,8 @@ export function buildPrompt(tasks) {
 
 /**
  * Saran deterministik bila semua provider gagal. Menyebut tugas sesuai urutan
- * masukan (paling mendesak lebih dulu).
+ * masukan (paling mendesak lebih dulu). Panjangnya dibatasi `MAX_ADVICE_CHARS`,
+ * sama seperti keluaran provider.
  *
  * @param {object[]} tasks Tugas terpilih, berurutan.
  * @returns {string} Teks saran.
@@ -88,7 +89,9 @@ export function ruleBasedAdvice(tasks) {
     "Kerjakan tugas berikut sesuai urutan, mulai dari yang paling mendesak:",
     ...lines,
     ...tail
-  ].join("\n");
+  ]
+    .join("\n")
+    .slice(0, MAX_ADVICE_CHARS);
 }
 
 /**

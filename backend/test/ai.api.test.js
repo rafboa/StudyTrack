@@ -108,3 +108,28 @@ test("requires login", async () => {
   const { status } = await advise(base);
   assert.equal(status, 401);
 });
+
+test("internal failure answers 500 without leaking, keeps the server alive and releases the rate limit", async () => {
+  clock = START;
+  const fake = { name: "fake", call: async () => "ok" };
+  const base = await start({ providers: [fake] });
+  const token = await login(base);
+
+  // Merusak db.json hanya untuk satu request: readDB() akan melempar SyntaxError.
+  fs.writeFileSync(process.env.DB_PATH, "{rusak-DB-LEAK-456");
+  let failed;
+  try {
+    failed = await advise(base, token);
+  } finally {
+    resetDB();
+  }
+  assert.equal(failed.status, 500);
+  assert.equal(typeof failed.body.error, "string");
+  assert.ok(!failed.text.includes("DB-LEAK-456"));
+  assert.ok(!failed.text.includes("SyntaxError"));
+
+  // Server masih menjawab, dan kegagalan internal tidak mengunci pengguna 10 detik.
+  const retry = await advise(base, token);
+  assert.equal(retry.status, 200);
+  assert.equal(retry.body.sumber, "fake");
+});
