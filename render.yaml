@@ -1,0 +1,27 @@
+# Blueprint Render: satu layanan web (Express melayani API dan frontend hasil build).
+# Nilai rahasia tidak boleh ditulis di sini. Variabel dengan `sync: false`
+# diisi lewat dashboard Render saat Blueprint dibuat.
+services:
+  - type: web
+    name: studytrack
+    runtime: node
+    plan: free
+    buildCommand: npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci
+    startCommand: npm --prefix backend start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false
+      - key: FALLBACK_LLM_BASE_URL
+        sync: false
+      - key: FALLBACK_LLM_API_KEY
+        sync: false
+      - key: FALLBACK_LLM_MODEL
+        sync: false

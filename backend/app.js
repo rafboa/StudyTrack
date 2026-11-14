@@ -5,6 +5,9 @@
  * Dipisahkan dari `server.js` supaya aplikasi bisa dibuat ulang dengan jam
  * (`now`) yang bisa diatur, sehingga mudah diuji tanpa membuka port tetap.
  */
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
 
@@ -15,17 +18,27 @@ import { createAiRouter } from "./routes/ai.js";
 import { buildProviders } from "./services/llm.js";
 import { resetDB } from "./db.js";
 
+// Hasil build frontend (`npm --prefix frontend run build`), relatif terhadap file ini.
+const DEFAULT_DIST_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "frontend",
+  "dist"
+);
+
 /**
  * Membuat aplikasi Express.
  *
- * @param {{ now?: () => Date, providers?: object[] }} [opts]
+ * @param {{ now?: () => Date, providers?: object[], distDir?: string }} [opts]
  *   now       : sumber waktu sekarang (bawaan `() => new Date()`), diakses route
  *               lewat `req.app.locals.now`.
  *   providers : daftar provider LLM untuk /api/ai (bawaan `buildProviders()`,
  *               dibaca dari environment); tersedia juga di `req.app.locals.providers`.
+ *   distDir   : folder hasil build frontend (bawaan `frontend/dist`). Jika berisi
+ *               `index.html`, folder ini disajikan sebagai file statis.
  * @returns {import("express").Express} Aplikasi Express yang belum di-listen.
  */
-export function createApp({ now = () => new Date(), providers } = {}) {
+export function createApp({ now = () => new Date(), providers, distDir = DEFAULT_DIST_DIR } = {}) {
   const app = express();
   app.locals.now = now;
   app.locals.providers = providers;
@@ -55,6 +68,19 @@ export function createApp({ now = () => new Date(), providers } = {}) {
     app.post("/api/dev/reset", (req, res) => {
       resetDB();
       res.json({ success: true, message: "Database direset ke data seed awal." });
+    });
+  }
+
+  /*
+   * Sajikan frontend hasil build bila ada (satu layanan untuk API dan UI).
+   * Keberadaan index.html dicek sekali saat aplikasi dibuat. GET non-/api lain
+   * dijawab index.html agar rute sisi klien (mis. /tasks) tetap jalan saat di-refresh.
+   */
+  const indexFile = path.join(distDir, "index.html");
+  if (fs.existsSync(indexFile)) {
+    app.use(express.static(distDir));
+    app.get(/^\/(?!api(\/|$)).*/, (req, res) => {
+      res.sendFile(indexFile);
     });
   }
 
