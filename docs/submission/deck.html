@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>StudyTrack: Reminder Tugas Mendekati Deadline</title>
+<style>
+  /* Export: msedge --headless --disable-gpu --no-pdf-header-footer --print-to-pdf=StudyTrack-Deck.pdf deck.html */
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #e5e7eb; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1f2937; counter-reset: slide; }
+  .slide {
+    counter-increment: slide;
+    position: relative; width: 1280px; height: 720px; overflow: hidden;
+    padding: 36px 56px 56px 56px; background: #ffffff;
+    page-break-after: always; break-after: page;
+    margin: 0 auto;
+  }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .slide::after {
+    content: counter(slide) " / 14"; position: absolute; right: 40px; bottom: 12px;
+    font-size: 19px; color: #6b7280;
+  }
+  .slide::before {
+    content: "StudyTrack | Reminder Tugas Mendekati Deadline"; position: absolute; left: 56px; bottom: 12px;
+    font-size: 19px; color: #6b7280;
+  }
+  .tag { font-size: 19px; font-weight: 700; color: #1d4ed8; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; }
+  h1 { font-size: 56px; line-height: 1.1; margin: 0 0 18px; color: #111827; }
+  h2 { font-size: 36px; line-height: 1.15; margin: 0 0 12px; color: #111827; }
+  p, li { font-size: 24px; line-height: 1.4; margin: 0 0 12px; }
+  ul, ol { margin: 0 0 8px; padding-left: 30px; }
+  code, pre { font-family: Consolas, "Courier New", monospace; }
+  code { background: #f3f4f6; padding: 0 5px; border-radius: 4px; font-size: 1em; }
+  pre { background: #111827; color: #e5e7eb; font-size: 21px; line-height: 1.45; padding: 20px 26px; border-radius: 10px; margin: 0 0 14px; white-space: pre; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th, td { border: 1px solid #9ca3af; padding: 5px 9px; vertical-align: top; text-align: left; font-size: 19px; line-height: 1.3; }
+  th { background: #1d4ed8; color: #fff; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  td code { font-size: 19px; padding: 0 3px; }
+  .note { font-size: 19px; color: #374151; margin: 10px 0 0; }
+  .ph { display: inline-block; background: #fef3c7; border: 2px dashed #b45309; color: #78350f; padding: 6px 12px; border-radius: 6px; font-size: 19px; font-weight: 600; margin: 6px 0 0; }
+  .t-pos { color: #047857; font-weight: 700; }
+  .t-neg { color: #b91c1c; font-weight: 700; }
+  .t-edge { color: #92400e; font-weight: 700; }
+  /* title slide */
+  .title-slide { background: #1e3a8a; color: #fff; padding-top: 160px; }
+  .title-slide h1 { color: #fff; }
+  .title-slide p { color: #dbeafe; font-size: 26px; }
+  .title-slide .tag { color: #93c5fd; }
+  .title-slide::before, .title-slide::after { color: #bfdbfe; }
+  /* cards */
+  .cards { display: flex; gap: 22px; margin: 14px 0 12px; }
+  .card { flex: 1; border: 2px solid #d1d5db; border-radius: 10px; padding: 14px 16px; background: #fff; }
+  .card .cap { font-size: 19px; font-weight: 700; color: #6b7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .03em; }
+  .card .judul { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .card .mk, .card .dl { font-size: 19px; color: #374151; margin-bottom: 4px; }
+  .badge { display: inline-block; font-size: 19px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin: 2px 6px 2px 0; }
+  .b-belum { background: #fef08a; color: #713f12; }
+  .b-mdk { background: #dc2626; color: #fff; }
+  .b-over { background: #4b5563; color: #fff; }
+  .card.mdk { border-color: #dc2626; background: #fef2f2; border-width: 4px; }
+  .card.over { border-color: #6b7280; background: #e5e7eb; border-style: dashed; }
+  .card.over .judul { text-decoration: underline; }
+  .cols { display: flex; gap: 28px; }
+  .cols > div { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- 1. Judul -->
+<section class="slide title-slide">
+  <p class="tag">Studi Kasus Video Assessment</p>
+  <h1>StudyTrack: Reminder Tugas Mendekati Deadline</h1>
+  <p>Academya Arkavidia 11.0, Career Path Software Engineer</p>
+  <p>Perancangan teknis per layer: Database, Backend, Frontend</p>
+  <p><span class="ph">[NAMA PESERTA: diisi sendiri]</span></p>
+</section>
+
+<!-- 2. P1 -->
+<section class="slide">
+  <p class="tag">Tugas 1 | Perencanaan Teknis (3P)</p>
+  <h2>P1, Perubahan</h2>
+  <p>Kebutuhan F01 sampai F04 dijawab dengan tiga pertanyaan panduan:</p>
+  <ol>
+    <li><b>Data baru?</b> Tidak ada data baru yang disimpan. Kategori dan sisa waktu <b>dihitung</b> (diturunkan) dari <code>deadline</code>, <code>status</code>, dan waktu saat ini.</li>
+    <li><b>Logika baru?</b> Ya. Kategorikan setiap tugas (<code>mendekati</code>, <code>overdue</code>, <code>normal</code>) dan urutkan per kelompok.</li>
+    <li><b>Tampilan baru?</b> Ya. Penanda berbeda untuk mendekati dan overdue pada card tugas, plus urutan tampil yang baru.</li>
+  </ol>
+</section>
+
+<!-- 3. P2 -->
+<section class="slide">
+  <p class="tag">Tugas 1 | Perencanaan Teknis (3P)</p>
+  <h2>P2, Pemetaan ke Layer</h2>
+  <table>
+    <colgroup><col style="width:46%"><col style="width:18%"><col style="width:18%"><col style="width:18%"></colgroup>
+    <thead><tr><th>Perubahan</th><th>Database</th><th>Backend</th><th>Frontend</th></tr></thead>
+    <tbody>
+      <tr><td>Kategori dan sisa waktu diturunkan</td><td>Tidak terdampak</td><td><b>Terdampak</b></td><td>Tidak terdampak</td></tr>
+      <tr><td>Urutan per kelompok (mendekati, overdue, normal)</td><td>Tidak terdampak</td><td><b>Terdampak</b></td><td>Tidak terdampak</td></tr>
+      <tr><td>Penanda visual dan refresh</td><td>Tidak terdampak</td><td>Tidak terdampak</td><td><b>Terdampak</b></td></tr>
+    </tbody>
+  </table>
+  <p class="note">Tabel ini hanya alat bantu (sesuai guidebook). Baris yang terdampak menjadi task di P3.</p>
+</section>
+
+<!-- 4. P3 (1/2) -->
+<section class="slide">
+  <p class="tag">Tugas 1 | Perencanaan Teknis (3P)</p>
+  <h2>P3, Tabel Task (1 dari 2)</h2>
+  <table>
+    <colgroup><col style="width:4%"><col style="width:33%"><col style="width:11%"><col style="width:15%"><col style="width:37%"></colgroup>
+    <thead><tr><th>No</th><th>Deskripsi Task</th><th>Layer</th><th>Ketergantungan</th><th>Catatan/Asumsi</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Dokumentasikan keputusan <b>tidak</b> mengubah skema tugas; opsional jelaskan index <code>(user_id, deadline)</code> untuk DB sungguhan</td><td>Database</td><td>-</td><td>Kategori yang disimpan akan basi seiring waktu, jadi dihitung per request. <code>deadline</code> adalah waktu lokal tanpa zona dan diperlakukan sebagai WIB.</td></tr>
+      <tr><td>2</td><td>Tulis <code>parseDeadlineWIB(deadline)</code> yang mengubah <code>YYYY-MM-DDTHH:mm</code> menjadi instan absolut dengan offset tetap <code>+07:00</code></td><td>Backend</td><td>-</td><td>Zona waktu host server tidak boleh berpengaruh.</td></tr>
+      <tr><td>3</td><td>Tulis <code>categorizeTask(task, now)</code> yang mengembalikan <code>{kategori, sisa_menit}</code>: <code>mendekati</code> jika <code>0 &lt; sisa &lt; 24 jam</code>, <code>overdue</code> jika <code>sisa &lt;= 0</code>, selain itu <code>normal</code>; <code>status</code> diabaikan</td><td>Backend</td><td>2</td><td><code>now</code> bisa disuntikkan untuk tes. Tepat 24 jam adalah <code>normal</code>. Tepat 0 adalah <code>overdue</code> (waktu habis). Tugas selesai ikut ditandai (keputusan pengguna, mengikuti F01 secara harfiah).</td></tr>
+      <tr><td>4</td><td>Ubah <code>GET /api/tasks</code>: tambahkan <code>kategori</code> dan <code>sisa_menit</code>; urutkan mendekati (terdekat dulu), overdue (yang baru lewat dulu), normal (<code>created_at</code> terbaru dulu); kembalikan <code>server_time</code></td><td>Backend</td><td>3</td><td>Memenuhi F02/F03/F04. Pengurutan di server agar sumber kebenaran tunggal.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 5. P3 (2/2) -->
+<section class="slide">
+  <p class="tag">Tugas 1 | Perencanaan Teknis (3P)</p>
+  <h2>P3, Tabel Task (2 dari 2)</h2>
+  <table>
+    <colgroup><col style="width:4%"><col style="width:33%"><col style="width:11%"><col style="width:15%"><col style="width:37%"></colgroup>
+    <thead><tr><th>No</th><th>Deskripsi Task</th><th>Layer</th><th>Ketergantungan</th><th>Catatan/Asumsi</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td>Tambahkan penanda berbasis <code>kategori</code> pada <code>TaskCard</code> (normal / mendekati / overdue) dengan label teks, tidak hanya warna</td><td>Frontend</td><td>4</td><td>Kebenaran logika lebih diutamakan daripada kompleksitas tampilan.</td></tr>
+      <tr><td>6</td><td>Halaman Tugas mengambil ulang data tiap 60 detik dan saat jendela mendapat fokus</td><td>Frontend</td><td>4</td><td>Halaman yang dibiarkan terbuka tidak boleh menampilkan kategori basi.</td></tr>
+      <tr><td>7</td><td>Tambahkan unit test <code>categorizeTask</code> memakai tabel data contoh dengan <code>now</code> tetap</td><td>Backend</td><td>3</td><td>Kasus yang sama menjadi tabel verifikasi Tugas 3.</td></tr>
+      <tr><td>8</td><td>Tambahkan <code>POST /api/ai/prioritas</code> + tombol UI saran urutan belajar, dengan rantai fallback</td><td>Backend + Frontend</td><td>4</td><td>Bonus AI. Tidak diwajibkan oleh F01 sampai F04.</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Ketiga layer terwakili: Database (task 1), Backend (task 2, 3, 4, 7, 8), Frontend (task 5, 6, 8).</p>
+</section>
+
+<!-- 6. Layer A -->
+<section class="slide">
+  <p class="tag">Tugas 2 | Rancangan Teknis</p>
+  <h2>Layer A, Database: skema tidak berubah</h2>
+  <ul>
+    <li>Field tugas yang sudah ada: <code>id, judul, deskripsi, deadline, status, mata_kuliah_id, created_at, user_id</code>. Semuanya sudah cukup untuk fitur ini.</li>
+    <li>Kolom <code>kategori</code> yang disimpan akan salah seiring waktu berjalan dan butuh background job untuk memperbaikinya, jadi kategori <b>diturunkan</b> saat request.</li>
+    <li>Dengan DB sungguhan, index <code>(user_id, deadline)</code> membantu bila penyaringan dipindah ke SQL.</li>
+    <li><code>deadline</code> disimpan sebagai waktu lokal tanpa zona dan diperlakukan sebagai WIB.</li>
+  </ul>
+</section>
+
+<!-- 7. Layer B (1/2) -->
+<section class="slide">
+  <p class="tag">Tugas 2 | Rancangan Teknis</p>
+  <h2>Layer B, Backend (1 dari 2): fungsi kategori</h2>
+<pre>WIB_OFFSET = "+07:00"
+parseDeadlineWIB(s)  -&gt; Date   // new Date(s + ":00" + WIB_OFFSET)
+
+categorizeTask(task, now):
+  // status sengaja diabaikan: kategori hanya bergantung pada deadline
+  remainingMs = parseDeadlineWIB(task.deadline) - now
+  if remainingMs &lt;= 0:                  overdue
+  else if remainingMs &lt; 24*3600*1000:   mendekati
+  else:                                 normal
+  sisa_menit = floor(remainingMs / 60000)   // negatif bila overdue</pre>
+  <p><b>Masukan:</b> <code>task.deadline</code> (<code>YYYY-MM-DDTHH:mm</code>, WIB), <code>now</code> (Date, bisa disuntikkan).</p>
+  <p><b>Keluaran:</b> <code>{kategori, sisa_menit}</code>.</p>
+</section>
+
+<!-- 8. Layer B (2/2) -->
+<section class="slide">
+  <p class="tag">Tugas 2 | Rancangan Teknis</p>
+  <h2>Layer B, Backend (2 dari 2): endpoint</h2>
+<pre>GET /api/tasks:
+  now = new Date()
+  tasks = userTasks.map(add kategori, sisa_menit, mata_kuliah)
+  sort by group rank (mendekati=0, overdue=1, normal=2), lalu dalam grup:
+     mendekati: sisa_menit asc
+     overdue:   sisa_menit desc   (paling baru lewat dulu)
+     normal:    created_at desc
+  respond { tasks, server_time: now.toISOString() }</pre>
+  <p><b>Masukan:</b> token login (hanya tugas milik pengguna itu, F04).</p>
+  <p><b>Keluaran:</b> <code>{ tasks: [..., kategori, sisa_menit, mata_kuliah], server_time }</code>.</p>
+</section>
+
+<!-- 9. Layer C -->
+<section class="slide">
+  <p class="tag">Tugas 2 | Rancangan Teknis</p>
+  <h2>Layer C, Frontend: sketsa card</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="cap">Normal</div>
+      <div class="judul">Sprint 2: Backend API Integration</div>
+      <div class="mk">CS 169, Software Engineering</div>
+      <div class="dl">Deadline 2026-07-06 23:59</div>
+      <span class="badge b-belum">Belum</span>
+    </div>
+    <div class="card mdk">
+      <div class="cap">Mendekati deadline</div>
+      <div class="judul">Project 3: BSTMap Implementation</div>
+      <div class="mk">CS 61B, Data Structures</div>
+      <div class="dl">Deadline 2026-07-02 10:00</div>
+      <span class="badge b-mdk">Mendekati Deadline: sisa 1 j 0 m</span>
+      <span class="badge b-belum">Belum</span>
+    </div>
+    <div class="card over">
+      <div class="cap">Overdue</div>
+      <div class="judul">Lab 4: Query Optimization Report</div>
+      <div class="mk">CS 186, Database Systems</div>
+      <div class="dl">Deadline 2026-07-03 23:59</div>
+      <span class="badge b-over">Terlambat: lewat 2 hari</span>
+      <span class="badge b-belum">Belum</span>
+    </div>
+  </div>
+  <p style="font-size:22px"><b>Kondisi penentu:</b> <code>task.kategori</code> dari backend (<code>normal</code> | <code>mendekati</code> | <code>overdue</code>). <code>TaskCard</code> hanya membaca nilai ini. Halaman mengambil ulang tiap 60 detik dan saat fokus. Penanda selalu memuat teks, tidak hanya warna. (Sketsa ilustrasi: nilai <code>now</code> berbeda untuk tiap kondisi.)</p>
+  <span class="ph">[PLACEHOLDER Task 8: screenshot aplikasi nyata untuk tiga kondisi card]</span>
+</section>
+
+<!-- 10. Verifikasi (1/2) -->
+<section class="slide">
+  <p class="tag">Tugas 3 | Pendekatan Verifikasi</p>
+  <h2>Skenario Verifikasi (1 dari 2)</h2>
+  <table>
+    <colgroup><col style="width:6%"><col style="width:34%"><col style="width:46%"><col style="width:14%"></colgroup>
+    <thead><tr><th>No.</th><th>Kondisi / Input</th><th>Hasil yang Diharapkan</th><th>Jenis Skenario</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>now = 2026-07-02 09:00</code> WIB; tugas 2 deadline <code>07-02 10:00</code></td><td>Tugas 2 <code>mendekati</code> (sisa sekitar 60 menit) dan tampil paling atas</td><td class="t-pos">Positif</td></tr>
+      <tr><td>2</td><td><code>now</code> sama; tugas 1 (<code>07-03 23:59</code>) dan tugas 3 (<code>07-06 23:59</code>)</td><td>Keduanya <code>normal</code> (sisa sekitar 39 jam dan lebih), urut <code>created_at</code></td><td class="t-pos">Positif</td></tr>
+      <tr><td>3</td><td><code>now = 2026-07-04 00:00</code>; tugas 1 dan tugas 2</td><td>Keduanya <code>overdue</code>, tetap tampil, dengan penanda overdue, bukan penanda mendekati</td><td class="t-neg">Negatif</td></tr>
+      <tr><td>4</td><td>Tugas 2 dengan <code>status = selesai</code> dan <code>now = 2026-07-02 09:00</code></td><td>Tetap <code>mendekati</code> (status tidak mengubah kategori); card juga menampilkan badge status "Selesai"</td><td class="t-edge">Edge Case</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), <code>now</code> tetap.</p>
+</section>
+
+<!-- 11. Verifikasi (2/2) -->
+<section class="slide">
+  <p class="tag">Tugas 3 | Pendekatan Verifikasi</p>
+  <h2>Skenario Verifikasi (2 dari 2)</h2>
+  <table>
+    <colgroup><col style="width:6%"><col style="width:34%"><col style="width:46%"><col style="width:14%"></colgroup>
+    <thead><tr><th>No.</th><th>Kondisi / Input</th><th>Hasil yang Diharapkan</th><th>Jenis Skenario</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td><code>now = 2026-07-01 10:00</code>; tugas 2 (tepat 24 jam tersisa)</td><td><code>normal</code> (harus kurang dari 24 jam secara ketat)</td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>6</td><td><code>now = 2026-07-02 10:00</code>; tugas 2 (sisa tepat 0)</td><td><code>overdue</code></td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>7</td><td>Zona waktu host server diatur ke UTC</td><td>Hasil sama dengan host WIB</td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>8</td><td>Tugas dekat deadline milik pengguna lain</td><td>Tidak dikembalikan (F04: hanya tugas sendiri)</td><td class="t-neg">Negatif</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Ringkasan jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4, 5, 6, 7).</p>
+  <span class="ph">[PLACEHOLDER Task 8: hasil unit test dan screenshot hasil tes yang dijalankan]</span>
+</section>
+
+<!-- 12. Konsistensi -->
+<section class="slide">
+  <p class="tag">Tugas 2 | Rancangan Teknis</p>
+  <h2>Konsistensi antar layer</h2>
+  <table>
+    <colgroup><col style="width:20%"><col style="width:42%"><col style="width:38%"></colgroup>
+    <thead><tr><th>Data (Database)</th><th>Backend</th><th>Frontend</th></tr></thead>
+    <tbody>
+      <tr><td><code>deadline</code></td><td><code>parseDeadlineWIB</code> lalu <code>categorizeTask</code> menghasilkan <code>kategori</code>, <code>sisa_menit</code></td><td><code>task.kategori</code>, <code>task.sisa_menit</code> memilih penanda dan teks sisa waktu</td></tr>
+      <tr><td><code>status</code></td><td>diabaikan oleh <code>categorizeTask</code>, diteruskan apa adanya</td><td>badge "Belum" / "Selesai" tetap tampil</td></tr>
+      <tr><td><code>created_at</code></td><td>urutan kelompok <code>normal</code></td><td>tidak dihitung ulang di klien</td></tr>
+      <tr><td><code>user_id</code></td><td>hanya tugas pengguna yang login (F04)</td><td>menampilkan apa yang diterima</td></tr>
+      <tr><td><code>mata_kuliah_id</code></td><td>digabung menjadi <code>mata_kuliah</code></td><td>nama mata kuliah di card</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Backend satu-satunya tempat kategori dan urutan dihitung. Frontend hanya menampilkan.</p>
+</section>
+
+<!-- 13. Bonus -->
+<section class="slide">
+  <p class="tag">Bonus</p>
+  <h2>Nilai tambah</h2>
+  <ul>
+    <li><b>Kode nyata:</b> rancangan Tugas 2 direalisasikan di starter kit. <span class="ph">[PLACEHOLDER Task 8: tautan repositori]</span></li>
+    <li><b>AI/LLM:</b> saran urutan belajar (<code>POST /api/ai/prioritas</code>): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.</li>
+    <li><b>Deployment:</b> satu layanan Render (Express menyajikan build React), satu URL publik. <span class="ph">[PLACEHOLDER Task 8: URL publik]</span> Batasan: <code>db.json</code> di free tier kembali ke seed saat redeploy atau restart.</li>
+    <li><b>Git history rapi:</b> branch fitur dan satu commit deskriptif per langkah.</li>
+  </ul>
+</section>
+
+<!-- 14. Penutup -->
+<section class="slide title-slide" style="padding-top:200px">
+  <p class="tag">Penutup</p>
+  <h1>Terima kasih</h1>
+  <p>Kategori diturunkan di backend tanpa mengubah skema. Urutan: Mendekati, lalu Overdue, lalu Normal. Penanda berlabel teks. 8 skenario verifikasi: Positif, Negatif, Edge Case.</p>
+</section>
+
+</body>
+</html>
