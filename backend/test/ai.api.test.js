@@ -88,7 +88,8 @@ test("no provider configured falls back to rule advice", async () => {
   assert.equal(body.jumlah_tugas, 1);
 });
 
-test("a failing provider never leaks its error to the client", async () => {
+test("a failing provider never leaks its error to the client", async (t) => {
+  t.mock.method(console, "warn", () => {});
   clock = START;
   const bad = {
     name: "gemini",
@@ -132,4 +133,25 @@ test("internal failure answers 500 without leaking, keeps the server alive and r
   const retry = await advise(base, token);
   assert.equal(retry.status, 200);
   assert.equal(retry.body.sumber, "fake");
+});
+
+test("an internal route failure is logged with console.error (message only) and answers 500", async (t) => {
+  clock = START;
+  const error = t.mock.method(console, "error", () => {});
+  // Iterator yang gagal membuat getAdvice melempar di luar try per provider,
+  // sehingga yang menangkapnya adalah catch milik route.
+  const broken = {
+    [Symbol.iterator]() {
+      throw new Error("pecah-di-route");
+    }
+  };
+  const base = await start({ providers: broken });
+  const { status, text } = await advise(base, await login(base));
+
+  assert.equal(status, 500);
+  assert.ok(!text.includes("pecah-di-route"));
+  assert.equal(error.mock.callCount(), 1);
+  const logged = error.mock.calls[0].arguments.map(String).join(" ");
+  assert.ok(logged.includes("pecah-di-route"));
+  assert.ok(!logged.includes("Bearer"));
 });

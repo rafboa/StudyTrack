@@ -2,7 +2,7 @@ import { Router } from "express";
 import { readDB } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { buildTaskList } from "../lib/deadline.js";
-import { selectAdviceTasks, getAdvice } from "../services/advice.js";
+import { selectAdviceTasks, getAdvice, describeError } from "../services/advice.js";
 
 export const RATE_LIMIT_MS = 10_000;
 
@@ -39,7 +39,8 @@ export function createAiRouter(providers) {
     lastCall.set(req.user.id, now.getTime());
 
     // Express 4 tidak menangkap penolakan async, jadi kegagalan internal
-    // (mis. db.json rusak) ditangani di sini. Isi error tidak dikirim ke klien.
+    // (mis. db.json rusak) ditangani di sini. Isi error dicatat di log (aman, lihat
+    // `describeError`) tetapi tidak dikirim ke klien.
     try {
       const db = readDB();
       const userTasks = db.tasks.filter((t) => t.user_id === req.user.id);
@@ -47,7 +48,8 @@ export function createAiRouter(providers) {
       const { saran, sumber } = await getAdvice(selected, providers);
 
       res.json({ saran, sumber, jumlah_tugas: selected.length });
-    } catch {
+    } catch (err) {
+      console.error(`[ai] POST /prioritas gagal: ${describeError(err)}`);
       // Kegagalan sisi server tidak boleh mengunci pengguna selama 10 detik.
       lastCall.delete(req.user.id);
       res.status(500).json({ error: "Terjadi kesalahan pada server. Coba lagi nanti." });

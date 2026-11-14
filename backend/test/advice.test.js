@@ -60,7 +60,8 @@ test("first provider wins and sumber is its name", async () => {
   assert.equal(b.calls, 0);
 });
 
-test("throwing provider falls through to next", async () => {
+test("throwing provider falls through to next", async (t) => {
+  t.mock.method(console, "warn", () => {});
   const a = provider("gemini", () => {
     throw new Error("boom");
   });
@@ -78,7 +79,8 @@ test("blank output counts as failure", async () => {
   assert.equal(result.sumber, "fallback-llm");
 });
 
-test("all providers fail gives rule advice that lists the nearest task first", async () => {
+test("all providers fail gives rule advice that lists the nearest task first", async (t) => {
+  t.mock.method(console, "warn", () => {});
   const a = provider("gemini", () => {
     throw new Error("x");
   });
@@ -127,4 +129,72 @@ test("rule advice is capped at 1500 chars", async () => {
   assert.equal(result.sumber, "rule");
   assert.ok(result.saran.length <= 1500);
   assert.ok(ruleBasedAdvice(tasks).length <= 1500);
+});
+
+function loggedText(mock) {
+  return mock.mock.calls.map((c) => c.arguments.map(String).join(" ")).join("\n");
+}
+
+test("a failing provider is logged with its name and error message only", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {});
+  const bad = provider("gemini", () => {
+    throw new Error("Provider LLM membalas HTTP 404");
+  });
+  const good = provider("fallback-llm", () => "ok");
+  const result = await getAdvice([task()], [bad, good]);
+
+  assert.equal(result.sumber, "fallback-llm");
+  assert.equal(warn.mock.callCount(), 1);
+  const text = loggedText(warn);
+  assert.ok(text.includes("gemini"));
+  assert.ok(text.includes("Provider LLM membalas HTTP 404"));
+});
+
+test("provider failure logs never contain the configured API key or the prompt", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {});
+  const saved = {
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    FALLBACK_LLM_API_KEY: process.env.FALLBACK_LLM_API_KEY
+  };
+  process.env.GEMINI_API_KEY = "KEY-SECRET-GEMINI-777";
+  process.env.FALLBACK_LLM_API_KEY = "KEY-SECRET-FALLBACK-888";
+  t.after(() => {
+    for (const [k, v] of Object.entries(saved)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  });
+
+  // Satu provider melempar pesan tulisan sendiri, satu lagi pesan yang kebetulan memuat kunci.
+  const plain = provider("gemini", () => {
+    throw new Error("Provider LLM membalas HTTP 500");
+  });
+  const leaky = provider("fallback-llm", () => {
+    throw new Error("gagal memanggil https://x.test/v1?key=KEY-SECRET-FALLBACK-888");
+  });
+  await getAdvice([task({ judul: "JUDUL-RAHASIA" })], [plain, leaky]);
+
+  const text = loggedText(warn);
+  assert.ok(text.includes("Provider LLM membalas HTTP 500"));
+  assert.ok(!text.includes("KEY-SECRET-GEMINI-777"));
+  assert.ok(!text.includes("KEY-SECRET-FALLBACK-888"));
+  assert.ok(!text.includes("JUDUL-RAHASIA"));
+});
+
+test("a non-Error throw or a SyntaxError is logged as a fixed string, never its content", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {});
+  const weird = provider("gemini", () => {
+    throw "KEY-SECRET-STRING-999"; // bukan instance Error
+  });
+  const badJson = provider("fallback-llm", () => {
+    JSON.parse('{"isi-respons-RESP-BODY-555');
+  });
+  await getAdvice([task()], [weird, badJson]);
+
+  assert.equal(warn.mock.callCount(), 2);
+  const text = loggedText(warn);
+  assert.ok(text.includes("gemini"));
+  assert.ok(text.includes("fallback-llm"));
+  assert.ok(!text.includes("KEY-SECRET-STRING-999"));
+  assert.ok(!text.includes("RESP-BODY-555"));
 });

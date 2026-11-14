@@ -26,6 +26,31 @@ export function selectAdviceTasks(ranked) {
   );
 }
 
+const UNKNOWN_ERROR = "kesalahan tidak dikenal";
+const SECRET_ENV_KEYS = ["GEMINI_API_KEY", "FALLBACK_LLM_API_KEY", "JWT_SECRET"];
+
+/**
+ * Mengubah nilai yang dilempar menjadi teks yang aman dicatat di log.
+ *
+ * Hanya instance Error yang pesannya dipakai; nilai lain diganti teks tetap.
+ * SyntaxError dicatat tanpa pesannya karena pesan itu bisa memuat potongan
+ * isi respons atau isi db.json. Nilai rahasia dari environment (kunci API,
+ * JWT_SECRET) yang kebetulan muncul di pesan disamarkan, dan panjangnya dibatasi.
+ *
+ * @param {unknown} err Nilai yang dilempar.
+ * @returns {string} Teks aman untuk log.
+ */
+export function describeError(err) {
+  if (!(err instanceof Error)) return UNKNOWN_ERROR;
+  if (err instanceof SyntaxError) return "SyntaxError (isi pesan tidak dicatat)";
+  let message = String(err.message || err.name || UNKNOWN_ERROR);
+  for (const key of SECRET_ENV_KEYS) {
+    const secret = process.env[key];
+    if (secret) message = message.split(secret).join("[disamarkan]");
+  }
+  return message.slice(0, MAX_FIELD_CHARS);
+}
+
 function clip(value, max) {
   return String(value ?? "").slice(0, max);
 }
@@ -100,8 +125,9 @@ export function ruleBasedAdvice(tasks) {
  * Tanpa tugas: pesan tetap dengan `sumber: "none"` dan tidak ada panggilan
  * provider. Provider yang melempar error atau mengembalikan teks kosong
  * dianggap gagal dan provider berikutnya dicoba. Jika semua gagal, dipakai
- * `ruleBasedAdvice` dengan `sumber: "rule"`. Error provider sengaja tidak
- * dicatat atau dikembalikan.
+ * `ruleBasedAdvice` dengan `sumber: "rule"`. Kegagalan provider dicatat lewat
+ * `console.warn` hanya berisi nama provider dan pesan error (lihat
+ * `describeError`); tidak pernah dikembalikan ke klien.
  *
  * @param {object[]} tasks Tugas terpilih, berurutan.
  * @param {{ name: string, call: (prompt: string) => Promise<string> }[]} providers
@@ -116,8 +142,9 @@ export async function getAdvice(tasks, providers) {
       const output = await provider.call(prompt);
       const text = typeof output === "string" ? output.trim() : "";
       if (text) return { saran: text.slice(0, MAX_ADVICE_CHARS), sumber: provider.name };
-    } catch {
+    } catch (err) {
       // Dianggap gagal; lanjut ke provider berikutnya.
+      console.warn(`[ai] provider ${String(provider.name)} gagal: ${describeError(err)}`);
     }
   }
   return { saran: ruleBasedAdvice(tasks), sumber: "rule" };

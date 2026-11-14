@@ -1,9 +1,17 @@
 import { Router } from "express";
 import { readDB, writeDB } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
-import { buildTaskList } from "../lib/deadline.js";
+import { buildTaskList, parseWIB } from "../lib/deadline.js";
 
 const router = Router();
+
+const INVALID_DEADLINE_MESSAGE =
+  "Format deadline tidak valid. Gunakan tanggal dan jam yang benar, mis. 2026-07-03T23:59.";
+
+/** True bila `deadline` dapat diurai oleh `parseWIB` (dengan atau tanpa detik). */
+function isValidDeadline(deadline) {
+  return !Number.isNaN(parseWIB(deadline).getTime());
+}
 
 // Seluruh endpoint tugas membutuhkan login.
 router.use(requireAuth);
@@ -49,12 +57,16 @@ router.get("/:id", (req, res) => {
  * Menambahkan tugas baru dengan status awal "belum".
  *
  * Body     : { mata_kuliah_id, judul, deadline, deskripsi? }
- * Response : 201 { task } | 400 input tidak valid atau mata kuliah bukan milik user
+ * Response : 201 { task } | 400 input tidak valid (termasuk deadline yang tidak
+ *            bisa diurai) atau mata kuliah bukan milik user
  */
 router.post("/", (req, res) => {
   const { mata_kuliah_id, judul, deskripsi, deadline } = req.body;
   if (!mata_kuliah_id || !judul || !deadline) {
     return res.status(400).json({ error: "mata_kuliah_id, judul, dan deadline wajib diisi." });
+  }
+  if (!isValidDeadline(deadline)) {
+    return res.status(400).json({ error: INVALID_DEADLINE_MESSAGE });
   }
 
   const db = readDB();
@@ -84,7 +96,7 @@ router.post("/", (req, res) => {
  * diubah.
  *
  * Body     : { judul?, deskripsi?, deadline?, status? } (status: "belum" | "selesai")
- * Response : 200 { task } | 400 status tidak valid | 404 tidak ditemukan
+ * Response : 200 { task } | 400 status atau deadline tidak valid | 404 tidak ditemukan
  */
 router.put("/:id", (req, res) => {
   const id = Number(req.params.id);
@@ -95,6 +107,9 @@ router.put("/:id", (req, res) => {
   }
 
   const { judul, deskripsi, deadline, status } = req.body;
+  if (deadline !== undefined && !isValidDeadline(deadline)) {
+    return res.status(400).json({ error: INVALID_DEADLINE_MESSAGE });
+  }
   if (judul !== undefined) task.judul = judul;
   if (deskripsi !== undefined) task.deskripsi = deskripsi;
   if (deadline !== undefined) task.deadline = deadline;
