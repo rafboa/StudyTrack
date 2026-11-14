@@ -113,3 +113,62 @@ test("dev reset stays off in production", async () => {
     prodServer.close();
   }
 });
+
+test("POST rejects an invalid deadline with 400 and saves nothing", async () => {
+  resetDB();
+  const token = await loginDemo();
+  const before = (await api("GET", "/api/tasks", { token })).body.tasks.length;
+
+  for (const deadline of ["20266-07-05T10:00", "bukan-tanggal", "2026-13-45T10:00"]) {
+    const res = await api("POST", "/api/tasks", {
+      token,
+      body: { mata_kuliah_id: 1, judul: "Tugas ngawur", deadline }
+    });
+    assert.equal(res.status, 400, deadline);
+    assert.equal(typeof res.body.error, "string");
+  }
+  const after = (await api("GET", "/api/tasks", { token })).body.tasks.length;
+  assert.equal(after, before);
+});
+
+test("POST accepts deadlines with and without seconds", async () => {
+  resetDB();
+  const token = await loginDemo();
+  for (const deadline of ["2026-07-05T10:00", "2026-07-05T10:00:30"]) {
+    const res = await api("POST", "/api/tasks", {
+      token,
+      body: { mata_kuliah_id: 1, judul: "Tugas valid", deadline }
+    });
+    assert.equal(res.status, 201, deadline);
+    assert.equal(res.body.task.deadline, deadline);
+  }
+});
+
+test("PUT rejects an invalid deadline with 400 and leaves the stored task unchanged", async () => {
+  resetDB();
+  const token = await loginDemo();
+  const original = (await api("GET", "/api/tasks/1", { token })).body.task;
+
+  const res = await api("PUT", "/api/tasks/1", {
+    token,
+    body: { judul: "Judul baru", deadline: "20266-07-05T10:00" }
+  });
+  assert.equal(res.status, 400);
+  assert.equal(typeof res.body.error, "string");
+
+  const stored = (await api("GET", "/api/tasks/1", { token })).body.task;
+  assert.deepEqual(stored, original);
+});
+
+test("PUT accepts valid deadlines and ignores a missing deadline", async () => {
+  resetDB();
+  const token = await loginDemo();
+  for (const deadline of ["2026-07-08T09:15", "2026-07-08T09:15:45"]) {
+    const res = await api("PUT", "/api/tasks/1", { token, body: { deadline } });
+    assert.equal(res.status, 200, deadline);
+    assert.equal(res.body.task.deadline, deadline);
+  }
+  const noDeadline = await api("PUT", "/api/tasks/1", { token, body: { status: "selesai" } });
+  assert.equal(noDeadline.status, 200);
+  assert.equal(noDeadline.body.task.deadline, "2026-07-08T09:15:45");
+});
