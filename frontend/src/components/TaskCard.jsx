@@ -1,4 +1,5 @@
 import React from "react";
+import { formatSisa } from "../lib/formatSisa.js";
 
 /**
  * Memformat deadline ke tampilan lokal Indonesia, contoh: "03 Jul 2026, 23.59".
@@ -21,19 +22,19 @@ function formatDeadline(deadline) {
  * Card satu tugas pada halaman Daftar Tugas.
  *
  * @param {object} props
- * @param {object} props.task Data tugas dari API (termasuk `mata_kuliah`).
+ * @param {object} props.task Data tugas dari API (termasuk `mata_kuliah`, `kategori`, `sisa_menit`).
  * @param {(task: object) => void} props.onToggleStatus Dipanggil saat tombol status ditekan.
  * @param {(id: number) => void} props.onDelete Dipanggil saat tombol hapus ditekan.
- *
- * CATATAN UNTUK PESERTA STUDI KASUS:
- * Komponen inilah yang merender setiap card tugas pada halaman Daftar Tugas.
- * Penanda visual "Mendekati Deadline" untuk fitur baru kemungkinan besar
- * akan ditambahkan di sekitar sini (atau dengan menambah prop baru ke
- * komponen ini), tergantung rancangan Anda.
  */
 export default function TaskCard({ task, onToggleStatus, onDelete }) {
+  const penanda = {
+    mendekati: "Mendekati Deadline",
+    overdue: "Terlambat"
+  }[task.kategori];
+  const sisa = formatSisa(task.sisa_menit, task.kategori);
+
   return (
-    <div className="card task-card">
+    <div className={`card task-card task-${task.kategori}`}>
       <div>
         <strong>{task.judul}</strong>
         <div className="meta">{task.mata_kuliah}</div>
@@ -41,9 +42,15 @@ export default function TaskCard({ task, onToggleStatus, onDelete }) {
         {task.deskripsi && <div className="meta">{task.deskripsi}</div>}
       </div>
       <div style={{ textAlign: "right" }}>
+        {penanda && (
+          <>
+            <span className={`badge ${task.kategori}`}>{penanda}</span>{" "}
+          </>
+        )}
         <span className={`badge ${task.status}`}>
           {task.status === "selesai" ? "Selesai" : "Belum"}
         </span>
+        {sisa && <div className="meta sisa">{sisa}</div>}
         <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
           <button className="btn" onClick={() => onToggleStatus(task)}>
             {task.status === "selesai" ? "Tandai Belum" : "Tandai Selesai"}
