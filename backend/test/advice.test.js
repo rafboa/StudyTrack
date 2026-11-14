@@ -118,3 +118,13 @@ test("long output is capped at 1500 chars", async () => {
   const result = await getAdvice([task()], [a]);
   assert.equal(result.saran.length, 1500);
 });
+
+test("rule advice is capped at 1500 chars", async () => {
+  const tasks = Array.from({ length: 10 }, (_, i) =>
+    task({ id: i + 1, judul: "T".repeat(200), mata_kuliah: "M".repeat(200), sisa_menit: i + 1 })
+  );
+  const result = await getAdvice(tasks, []);
+  assert.equal(result.sumber, "rule");
+  assert.ok(result.saran.length <= 1500);
+  assert.ok(ruleBasedAdvice(tasks).length <= 1500);
+});

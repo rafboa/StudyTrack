@@ -26,6 +26,7 @@ export function createAiRouter(providers) {
    * Satu panggilan per pengguna tiap 10 detik.
    *
    * Response : 200 { saran, sumber, jumlah_tugas } | 429 terlalu sering
+   *            | 500 kegagalan internal (batas laju dilepas)
    */
   router.post("/prioritas", async (req, res) => {
     const now = req.app.locals.now();
@@ -37,12 +38,20 @@ export function createAiRouter(providers) {
     }
     lastCall.set(req.user.id, now.getTime());
 
-    const db = readDB();
-    const userTasks = db.tasks.filter((t) => t.user_id === req.user.id);
-    const selected = selectAdviceTasks(buildTaskList(userTasks, db.courses, now));
-    const { saran, sumber } = await getAdvice(selected, providers);
+    // Express 4 tidak menangkap penolakan async, jadi kegagalan internal
+    // (mis. db.json rusak) ditangani di sini. Isi error tidak dikirim ke klien.
+    try {
+      const db = readDB();
+      const userTasks = db.tasks.filter((t) => t.user_id === req.user.id);
+      const selected = selectAdviceTasks(buildTaskList(userTasks, db.courses, now));
+      const { saran, sumber } = await getAdvice(selected, providers);
 
-    res.json({ saran, sumber, jumlah_tugas: selected.length });
+      res.json({ saran, sumber, jumlah_tugas: selected.length });
+    } catch {
+      // Kegagalan sisi server tidak boleh mengunci pengguna selama 10 detik.
+      lastCall.delete(req.user.id);
+      res.status(500).json({ error: "Terjadi kesalahan pada server. Coba lagi nanti." });
+    }
   });
 
   return router;
