@@ -11,6 +11,8 @@ import cors from "cors";
 import authRoutes from "./routes/auth.js";
 import courseRoutes from "./routes/courses.js";
 import taskRoutes from "./routes/tasks.js";
+import { createAiRouter } from "./routes/ai.js";
+import { buildProviders } from "./services/llm.js";
 import { resetDB } from "./db.js";
 
 /**
@@ -19,8 +21,8 @@ import { resetDB } from "./db.js";
  * @param {{ now?: () => Date, providers?: object[] }} [opts]
  *   now       : sumber waktu sekarang (bawaan `() => new Date()`), diakses route
  *               lewat `req.app.locals.now`.
- *   providers : daftar provider yang dipakai fitur lain, tersedia lewat
- *               `req.app.locals.providers` (tidak diisi secara bawaan).
+ *   providers : daftar provider LLM untuk /api/ai (bawaan `buildProviders()`,
+ *               dibaca dari environment); tersedia juga di `req.app.locals.providers`.
  * @returns {import("express").Express} Aplikasi Express yang belum di-listen.
  */
 export function createApp({ now = () => new Date(), providers } = {}) {
@@ -39,6 +41,8 @@ export function createApp({ now = () => new Date(), providers } = {}) {
   app.use("/api/auth", authRoutes);
   app.use("/api/courses", courseRoutes);
   app.use("/api/tasks", taskRoutes);
+  // Provider dibentuk sekali per aplikasi, bukan per request.
+  app.use("/api/ai", createAiRouter(app.locals.providers ?? buildProviders()));
 
   /*
    * POST /api/dev/reset - mengembalikan data ke kondisi seed awal.
