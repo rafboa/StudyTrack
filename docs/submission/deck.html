@@ -163,7 +163,8 @@ categorizeTask(task, now):
   if remainingMs &lt;= 0:                  overdue
   else if remainingMs &lt; 24*3600*1000:   mendekati
   else:                                 normal
-  sisa_menit = floor(remainingMs / 60000)   // negatif bila overdue</pre>
+  // sisa_menit dibulatkan ke arah nol; nol atau negatif bila overdue
+  sisa_menit = trunc(remainingMs / 60000)</pre>
   <p><b>Masukan:</b> <code>task.deadline</code> (<code>YYYY-MM-DDTHH:mm</code>, WIB), <code>now</code> (Date, bisa disuntikkan).</p>
   <p><b>Keluaran:</b> <code>{kategori, sisa_menit}</code>.</p>
 </section>
@@ -275,10 +276,10 @@ categorizeTask(task, now):
   <p class="tag">Bonus</p>
   <h2>Nilai tambah</h2>
   <ul>
-    <li><b>Kode nyata:</b> rancangan Tugas 2 direalisasikan di starter kit. <span class="ph">[PLACEHOLDER Task 8: tautan repositori]</span></li>
-    <li><b>AI/LLM:</b> saran urutan belajar (<code>POST /api/ai/prioritas</code>): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.</li>
-    <li><b>Deployment:</b> satu layanan Render (Express menyajikan build React), satu URL publik. <span class="ph">[PLACEHOLDER Task 8: URL publik]</span> Batasan: <code>db.json</code> di free tier kembali ke seed saat redeploy atau restart.</li>
-    <li><b>Git history rapi:</b> branch fitur dan satu commit deskriptif per langkah.</li>
+    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>Kode nyata:</b> rancangan Tugas 2 direalisasikan di starter kit. <span class="ph">[PLACEHOLDER Task 8: tautan repositori]</span></li>
+    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>AI/LLM:</b> saran urutan belajar (<code>POST /api/ai/prioritas</code>): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.</li>
+    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>Deployment:</b> satu layanan Render (Express menyajikan build React), satu URL publik. <span class="ph">[PLACEHOLDER Task 8: URL publik]</span> Batasan: <code>db.json</code> di free tier kembali ke seed saat redeploy atau restart.</li>
+    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>Git history rapi:</b> branch fitur dan satu commit deskriptif per langkah.</li>
   </ul>
 </section>
 

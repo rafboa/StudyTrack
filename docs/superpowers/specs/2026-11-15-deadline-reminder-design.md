@@ -96,7 +96,7 @@ categorizeTask(task, now):
   if remainingMs <= 0:                  overdue
   else if remainingMs < 24*3600*1000:   mendekati
   else:                                 normal
-  sisa_menit = floor(remainingMs / 60000)   // negative when overdue
+  sisa_menit = trunc(remainingMs / 60000)   // truncate toward zero; zero or negative when overdue
 GET /api/tasks:
   now = new Date()
   tasks = userTasks.map(add kategori, sisa_menit, mata_kuliah)

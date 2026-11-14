@@ -82,7 +82,8 @@ categorizeTask(task, now):
   if remainingMs <= 0:                  overdue
   else if remainingMs < 24*3600*1000:   mendekati
   else:                                 normal
-  sisa_menit = floor(remainingMs / 60000)   // negatif bila overdue
+  // sisa_menit dibulatkan ke arah nol; nol atau negatif bila overdue
+  sisa_menit = trunc(remainingMs / 60000)
 ```
 
 Masukan: `task.deadline` (`YYYY-MM-DDTHH:mm`, WIB), `now` (Date, bisa disuntikkan).
@@ -166,10 +167,10 @@ Backend menjadi satu-satunya tempat kategori dan urutan dihitung. Frontend hanya
 
 ## Slide 13. Bonus
 
-- **Kode nyata:** rancangan Tugas 2 direalisasikan di starter kit. `[PLACEHOLDER Task 8: tautan repositori]`
-- **AI/LLM:** saran urutan belajar (`POST /api/ai/prioritas`): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.
-- **Deployment:** satu layanan Render (Express menyajikan build React), satu URL publik. `[PLACEHOLDER Task 8: URL publik]` Batasan: `db.json` di free tier kembali ke seed saat redeploy/restart.
-- **Git history rapi:** branch fitur dan satu commit deskriptif per langkah.
+- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **Kode nyata:** rancangan Tugas 2 direalisasikan di starter kit. `[PLACEHOLDER Task 8: tautan repositori]`
+- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **AI/LLM:** saran urutan belajar (`POST /api/ai/prioritas`): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.
+- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **Deployment:** satu layanan Render (Express menyajikan build React), satu URL publik. `[PLACEHOLDER Task 8: URL publik]` Batasan: `db.json` di free tier kembali ke seed saat redeploy/restart.
+- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **Git history rapi:** branch fitur dan satu commit deskriptif per langkah.
 
 ---
 
