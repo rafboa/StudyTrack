@@ -160,6 +160,29 @@ Cari komentar bertuliskan **"CATATAN UNTUK PESERTA STUDI KASUS"** pada dua file 
 
 Keduanya hanya penunjuk titik yang relevan. Anda tidak harus menaruh logika di sana, silakan sesuaikan dengan rancangan teknis Anda sendiri.
 
+## Deployment ke Render
+
+Aplikasi di-deploy sebagai satu layanan web: Express melayani API sekaligus frontend hasil build (`frontend/dist`), sehingga tidak perlu mengatur URL backend terpisah.
+
+1. Push repositori ke GitHub.
+2. Di dashboard Render, pilih **New > Blueprint**, hubungkan repositori, lalu Render membaca `render.yaml` di root proyek.
+3. Isi variabel environment berikut di dashboard Render (hanya nama, nilainya milik Anda sendiri):
+   - `GEMINI_API_KEY`
+   - `GEMINI_MODEL`
+   - `FALLBACK_LLM_BASE_URL`
+   - `FALLBACK_LLM_API_KEY`
+   - `FALLBACK_LLM_MODEL`
+
+   Kelimanya opsional. Bila dikosongkan, saran urutan belajar memakai aturan bawaan. `NODE_ENV`, `NODE_VERSION`, dan `JWT_SECRET` sudah diatur oleh `render.yaml` (`JWT_SECRET` dibuat acak oleh Render). Saat `NODE_ENV=production`, backend menolak start jika `JWT_SECRET` kosong.
+4. Tunggu build selesai, lalu buka URL publik layanan dan masuk dengan akun demo.
+
+Hal yang perlu diketahui pada paket gratis:
+
+- `db.json` dikembalikan ke data seed setiap kali layanan di-redeploy atau di-restart, karena penyimpanan file bersifat sementara.
+- Layanan tidur setelah beberapa waktu tidak diakses, jadi request pertama setelah idle lambat. Buka URL beberapa menit sebelum merekam atau membagikannya.
+- Deadline pada data seed jatuh di Juli 2026, sehingga di demo tugas-tugas tersebut tampil sebagai terlambat sampai tugas baru ditambahkan.
+- Endpoint `POST /api/dev/reset` tidak tersedia di production.
+
 ## Catatan
 
 - Starter kit ini sengaja dibuat minimal. Fokus utamanya adalah fitur reminder deadline. Bonus lain pada dokumen (pemanfaatan AI/LLM, deployment, dan Git history yang rapi) bersifat opsional.
