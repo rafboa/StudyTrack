@@ -18,7 +18,7 @@
   }
   .slide:last-child { page-break-after: auto; break-after: auto; }
   .slide::after {
-    content: counter(slide) " / 14"; position: absolute; right: 40px; bottom: 12px;
+    content: counter(slide) " / 16"; position: absolute; right: 40px; bottom: 12px;
     font-size: 19px; color: #6b7280;
   }
   .slide::before {
@@ -49,19 +49,16 @@
   .title-slide p { color: #dbeafe; font-size: 26px; }
   .title-slide .tag { color: #93c5fd; }
   .title-slide::before, .title-slide::after { color: #bfdbfe; }
-  /* cards */
-  .cards { display: flex; gap: 22px; margin: 14px 0 12px; }
-  .card { flex: 1; border: 2px solid #d1d5db; border-radius: 10px; padding: 14px 16px; background: #fff; }
-  .card .cap { font-size: 19px; font-weight: 700; color: #6b7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .03em; }
-  .card .judul { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-  .card .mk, .card .dl { font-size: 19px; color: #374151; margin-bottom: 4px; }
-  .badge { display: inline-block; font-size: 19px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin: 2px 6px 2px 0; }
-  .b-belum { background: #fef08a; color: #713f12; }
-  .b-mdk { background: #dc2626; color: #fff; }
-  .b-over { background: #4b5563; color: #fff; }
-  .card.mdk { border-color: #dc2626; background: #fef2f2; border-width: 4px; }
-  .card.over { border-color: #6b7280; background: #e5e7eb; border-style: dashed; }
-  .card.over .judul { text-decoration: underline; }
+  /* screenshots */
+  .shots { margin: 6px 0 8px; }
+  .shot-row { display: flex; align-items: center; gap: 24px; margin: 0 0 8px; }
+  .shot-row img { width: 700px; height: auto; border: 1px solid #9ca3af; border-radius: 8px; display: block; }
+  .shot-row .txt { flex: 1; font-size: 19px; line-height: 1.35; }
+  .shot-row .txt b { font-size: 21px; }
+  .shot-single { display: flex; align-items: flex-start; gap: 28px; margin-top: 8px; }
+  .shot-single img { width: 768px; height: auto; border: 1px solid #9ca3af; border-radius: 8px; display: block; }
+  .shot-single .txt { flex: 1; font-size: 19px; line-height: 1.4; }
+  .shot-single .txt p { font-size: 19px; line-height: 1.4; margin: 0 0 10px; }
   .cols { display: flex; gap: 28px; }
   .cols > div { flex: 1; }
 </style>
@@ -188,34 +185,23 @@ categorizeTask(task, now):
 <!-- 9. Layer C -->
 <section class="slide">
   <p class="tag">Tugas 2 | Rancangan Teknis</p>
-  <h2>Layer C, Frontend: sketsa card</h2>
-  <div class="cards">
-    <div class="card">
-      <div class="cap">Normal</div>
-      <div class="judul">Sprint 2: Backend API Integration</div>
-      <div class="mk">CS 169, Software Engineering</div>
-      <div class="dl">Deadline 2026-07-06 23:59</div>
-      <span class="badge b-belum">Belum</span>
+  <h2>Layer C, Frontend: card dari aplikasi nyata</h2>
+  <div class="shots">
+    <div class="shot-row">
+      <img src="screenshots/normal.png" alt="Card tugas kategori normal">
+      <div class="txt"><b>Normal</b> (sisa 24 jam atau lebih): card biasa, hanya badge status "Belum". Tanpa penanda tambahan.</div>
     </div>
-    <div class="card mdk">
-      <div class="cap">Mendekati deadline</div>
-      <div class="judul">Project 3: BSTMap Implementation</div>
-      <div class="mk">CS 61B, Data Structures</div>
-      <div class="dl">Deadline 2026-07-02 10:00</div>
-      <span class="badge b-mdk">Mendekati Deadline: sisa 1 j 0 m</span>
-      <span class="badge b-belum">Belum</span>
+    <div class="shot-row">
+      <img src="screenshots/mendekati.png" alt="Card tugas kategori mendekati deadline">
+      <div class="txt"><b>Mendekati</b> (kurang dari 24 jam): tepi dan latar card disorot, badge "Mendekati Deadline", dan teks sisa waktu "Sisa 1 j 59 m".</div>
     </div>
-    <div class="card over">
-      <div class="cap">Overdue</div>
-      <div class="judul">Lab 4: Query Optimization Report</div>
-      <div class="mk">CS 186, Database Systems</div>
-      <div class="dl">Deadline 2026-07-03 23:59</div>
-      <span class="badge b-over">Terlambat: lewat 2 hari</span>
-      <span class="badge b-belum">Belum</span>
+    <div class="shot-row">
+      <img src="screenshots/overdue.png" alt="Card tugas kategori overdue">
+      <div class="txt"><b>Overdue</b> (waktu habis): tepi dan latar merah, badge "Terlambat", dan teks "Terlambat 131 hr 2 j".</div>
     </div>
   </div>
-  <p style="font-size:22px"><b>Kondisi penentu:</b> <code>task.kategori</code> dari backend (<code>normal</code> | <code>mendekati</code> | <code>overdue</code>). <code>TaskCard</code> hanya membaca nilai ini. Halaman mengambil ulang tiap 60 detik dan saat fokus. Penanda selalu memuat teks, tidak hanya warna. (Sketsa ilustrasi: nilai <code>now</code> berbeda untuk tiap kondisi.)</p>
-  <span class="ph">[PLACEHOLDER Task 8: screenshot aplikasi nyata untuk tiga kondisi card]</span>
+  <p style="font-size:19px; line-height:1.35; margin:0 0 6px"><b>Kondisi penentu:</b> <code>task.kategori</code> dari backend. Refresh tiap 60 detik dan saat fokus; penanda selalu memuat teks.</p>
+  <p style="font-size:19px; line-height:1.35; margin:0"><b>Sumber gambar:</b> aplikasi nyata pada 15 Nov 2026 sekitar 02.14 WIB (<code>now</code> = jam server): data seed (semua sudah terlambat) ditambah satu tugas bertenggat sekitar 2 jam lagi dan satu tugas bertenggat 3 hari lagi.</p>
 </section>
 
 <!-- 10. Verifikasi (1/2) -->
@@ -223,16 +209,16 @@ categorizeTask(task, now):
   <p class="tag">Tugas 3 | Pendekatan Verifikasi</p>
   <h2>Skenario Verifikasi (1 dari 2)</h2>
   <table>
-    <colgroup><col style="width:6%"><col style="width:34%"><col style="width:46%"><col style="width:14%"></colgroup>
+    <colgroup><col style="width:6%"><col style="width:33%"><col style="width:48%"><col style="width:13%"></colgroup>
     <thead><tr><th>No.</th><th>Kondisi / Input</th><th>Hasil yang Diharapkan</th><th>Jenis Skenario</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td><code>now = 2026-07-02 09:00</code> WIB; tugas 2 deadline <code>07-02 10:00</code></td><td>Tugas 2 <code>mendekati</code> (sisa sekitar 60 menit) dan tampil paling atas</td><td class="t-pos">Positif</td></tr>
-      <tr><td>2</td><td><code>now</code> sama; tugas 1 (<code>07-03 23:59</code>) dan tugas 3 (<code>07-06 23:59</code>)</td><td>Keduanya <code>normal</code> (sisa sekitar 39 jam dan lebih), urut <code>created_at</code></td><td class="t-pos">Positif</td></tr>
-      <tr><td>3</td><td><code>now = 2026-07-04 00:00</code>; tugas 1 dan tugas 2</td><td>Keduanya <code>overdue</code>, tetap tampil, dengan penanda overdue, bukan penanda mendekati</td><td class="t-neg">Negatif</td></tr>
-      <tr><td>4</td><td>Tugas 2 dengan <code>status = selesai</code> dan <code>now = 2026-07-02 09:00</code></td><td>Tetap <code>mendekati</code> (status tidak mengubah kategori); card juga menampilkan badge status "Selesai"</td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>1</td><td><code>now = 2026-07-02 09:00</code> WIB; tugas 2 deadline <code>07-02 10:00</code></td><td>Tugas 2 <code>mendekati</code>, <code>sisa_menit = 60</code>, tampil paling atas (urutan id 2, 3, 1). Test: <code>seed at 2026-07-02T09:00+07:00</code></td><td class="t-pos">Positif</td></tr>
+      <tr><td>2</td><td><code>now</code> sama; tugas 1 (<code>07-03 23:59</code>) dan tugas 3 (<code>07-06 23:59</code>)</td><td>Keduanya <code>normal</code>; tugas 1 <code>sisa_menit = 2339</code> (sekitar 39 jam), tugas 3 lebih jauh; urut <code>created_at</code> terbaru dulu. Test: sama dengan skenario 1</td><td class="t-pos">Positif</td></tr>
+      <tr><td>3</td><td><code>now = 2026-07-04 00:00</code>; tugas 1 dan tugas 2</td><td>Keduanya <code>overdue</code> (tugas 1 <code>-1</code>, tugas 2 <code>-2280</code> menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati. Test: <code>seed at 2026-07-04T00:00+07:00</code></td><td class="t-neg">Negatif</td></tr>
+      <tr><td>4</td><td>Tugas 2 dengan <code>status = selesai</code> dan <code>now = 2026-07-02 09:00</code></td><td>Tetap <code>mendekati</code> (status tidak mengubah kategori); card juga memuat badge status "Selesai". Test: <code>selesai is still flagged</code></td><td class="t-edge">Edge Case</td></tr>
     </tbody>
   </table>
-  <p class="note">Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), <code>now</code> tetap.</p>
+  <p class="note">Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), <code>now</code> tetap. Semua test ada di <code>backend/test/deadline.test.js</code> dan lulus.</p>
 </section>
 
 <!-- 11. Verifikasi (2/2) -->
@@ -240,22 +226,38 @@ categorizeTask(task, now):
   <p class="tag">Tugas 3 | Pendekatan Verifikasi</p>
   <h2>Skenario Verifikasi (2 dari 2)</h2>
   <table>
-    <colgroup><col style="width:6%"><col style="width:34%"><col style="width:46%"><col style="width:14%"></colgroup>
+    <colgroup><col style="width:6%"><col style="width:33%"><col style="width:48%"><col style="width:13%"></colgroup>
     <thead><tr><th>No.</th><th>Kondisi / Input</th><th>Hasil yang Diharapkan</th><th>Jenis Skenario</th></tr></thead>
     <tbody>
-      <tr><td>5</td><td><code>now = 2026-07-01 10:00</code>; tugas 2 (tepat 24 jam tersisa)</td><td><code>normal</code> (harus kurang dari 24 jam secara ketat)</td><td class="t-edge">Edge Case</td></tr>
-      <tr><td>6</td><td><code>now = 2026-07-02 10:00</code>; tugas 2 (sisa tepat 0)</td><td><code>overdue</code></td><td class="t-edge">Edge Case</td></tr>
-      <tr><td>7</td><td>Zona waktu host server diatur ke UTC</td><td>Hasil sama dengan host WIB</td><td class="t-edge">Edge Case</td></tr>
-      <tr><td>8</td><td>Tugas dekat deadline milik pengguna lain</td><td>Tidak dikembalikan (F04: hanya tugas sendiri)</td><td class="t-neg">Negatif</td></tr>
+      <tr><td>5</td><td><code>now = 2026-07-01 10:00</code>; tugas 2 (tepat 24 jam tersisa)</td><td><code>normal</code>, <code>sisa_menit = 1440</code> (harus kurang dari 24 jam secara ketat); satu menit kemudian <code>mendekati</code>, <code>1439</code>. Test: <code>exactly 24h is normal</code></td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>6</td><td><code>now = 2026-07-02 10:00</code>; tugas 2 (sisa tepat 0)</td><td><code>overdue</code>, <code>sisa_menit = 0</code>. Test: <code>exactly 0 is overdue</code></td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>7</td><td>Zona waktu host server diatur ke UTC</td><td>Hasil sama dengan host WIB (juga diuji dengan <code>America/Los_Angeles</code>). Test: <code>host timezone irrelevant</code></td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>8</td><td>Tugas dekat deadline milik pengguna lain</td><td>Tidak dikembalikan (F04: hanya tugas sendiri). Test: <code>only returns the logged-in user's own tasks</code> (<code>tasks.api.test.js</code>)</td><td class="t-neg">Negatif</td></tr>
     </tbody>
   </table>
-  <p class="note">Ringkasan jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4, 5, 6, 7).</p>
-  <span class="ph">[PLACEHOLDER Task 8: hasil unit test dan screenshot hasil tes yang dijalankan]</span>
+  <p class="note">Ringkasan jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4, 5, 6, 7). Skenario 1 sampai 7 ada di <code>deadline.test.js</code>, skenario 8 di <code>tasks.api.test.js</code>.</p>
 </section>
 
-<!-- 12. Konsistensi -->
+<!-- 12. Hasil pengujian -->
 <section class="slide">
-  <p class="tag">Tugas 2 | Rancangan Teknis</p>
+  <p class="tag">Tugas 3 | Hasil Pengujian</p>
+  <h2>Hasil test dan build yang dijalankan</h2>
+  <table>
+    <colgroup><col style="width:40%"><col style="width:60%"></colgroup>
+    <thead><tr><th>Perintah</th><th>Hasil</th></tr></thead>
+    <tbody>
+      <tr><td><code>cd backend &amp;&amp; npm test</code></td><td><b>57 test lulus</b>, 0 gagal, 0 dilewati (7 berkas)</td></tr>
+      <tr><td><code>cd frontend &amp;&amp; npm test</code></td><td><b>4 test lulus</b>, 0 gagal (format sisa waktu)</td></tr>
+      <tr><td><code>npm --prefix frontend run build</code></td><td><b>Build berhasil</b> (Vite 8.1.0, 80 modul)</td></tr>
+    </tbody>
+  </table>
+  <p class="note" style="margin-top:14px">Rincian backend: <code>deadline.test.js</code> 16 (kategori, urutan, WIB, zona host), <code>advice.test.js</code> 10 dan <code>ai.api.test.js</code> 6 (saran AI), <code>llm.test.js</code> 9 (provider), <code>static.test.js</code> 7 (frontend dari Express), <code>config.test.js</code> 5 (konfigurasi production), <code>tasks.api.test.js</code> 4 (endpoint tugas).</p>
+  <p class="note">Test AI memakai provider tiruan, jadi tidak ada pemanggilan Gemini sungguhan di dalam test. Skenario verifikasi 1 sampai 8 memetakan ke test yang lulus di atas.</p>
+</section>
+
+<!-- 13. Konsistensi -->
+<section class="slide">
+  <p class="tag">Ringkasan</p>
   <h2>Konsistensi antar layer</h2>
   <table>
     <colgroup><col style="width:20%"><col style="width:42%"><col style="width:38%"></colgroup>
@@ -271,19 +273,33 @@ categorizeTask(task, now):
   <p class="note">Backend satu-satunya tempat kategori dan urutan dihitung. Frontend hanya menampilkan.</p>
 </section>
 
-<!-- 13. Bonus -->
+<!-- 14. Bonus -->
 <section class="slide">
   <p class="tag">Bonus</p>
   <h2>Nilai tambah</h2>
   <ul>
-    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>Kode nyata:</b> rancangan Tugas 2 direalisasikan di starter kit. <span class="ph">[PLACEHOLDER Task 8: tautan repositori]</span></li>
-    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>AI/LLM:</b> saran urutan belajar (<code>POST /api/ai/prioritas</code>): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.</li>
-    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>Deployment:</b> satu layanan Render (Express menyajikan build React), satu URL publik. <span class="ph">[PLACEHOLDER Task 8: URL publik]</span> Batasan: <code>db.json</code> di free tier kembali ke seed saat redeploy atau restart.</li>
-    <li><span class="ph">[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]</span> <b>Git history rapi:</b> branch fitur dan satu commit deskriptif per langkah.</li>
+    <li style="font-size:22px"><b>Kode nyata:</b> dibangun. Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 57 test backend dan 4 test frontend yang lulus. Repositori: <span class="ph">[ISI: tautan repositori GitHub]</span></li>
+    <li style="font-size:22px"><b>AI/LLM:</b> dibangun dan diuji unit dengan provider tiruan. <code>POST /api/ai/prioritas</code> memakai rantai Gemini, lalu model open-source, lalu aturan. Fallback berbasis aturan sudah terverifikasi (slide 15). Pemanggilan Gemini sungguhan belum dicoba (menunggu kunci API). <span class="ph">[ISI setelah uji kunci: sumber gemini terkonfirmasi]</span></li>
+    <li style="font-size:22px"><b>Deployment:</b> siap deploy. Blueprint Render (satu layanan, Express menyajikan build React) dan mode production sudah diuji lokal. Belum ada URL publik. <span class="ph">[ISI: URL publik Render setelah deploy]</span> Batasan: <code>db.json</code> di free tier kembali ke seed saat redeploy atau restart.</li>
+    <li style="font-size:22px"><b>Git history rapi:</b> branch fitur terpisah dari <code>main</code>, satu commit baseline (<code>5db4a7e</code>) lalu 12 commit deskriptif per langkah (<code>feat</code>, <code>fix</code>, <code>style</code>, <code>docs</code>).</li>
   </ul>
 </section>
 
-<!-- 14. Penutup -->
+<!-- 15. Bukti AI -->
+<section class="slide">
+  <p class="tag">Bonus | AI/LLM</p>
+  <h2>Saran urutan belajar: tampilan nyata</h2>
+  <div class="shot-single">
+    <img src="screenshots/advice.png" alt="Panel Saran Urutan Belajar dengan hasil saran">
+    <div class="txt">
+      <p>Tombol "Minta Saran Prioritas" memanggil <code>POST /api/ai/prioritas</code>. Server memilih tugas mendekati dan terlambat milik pengguna yang login; klien tidak mengirim data apa pun.</p>
+      <p>Satu panggilan per pengguna tiap 10 detik. Kunci API hanya di environment variable.</p>
+      <p>Keterangan "Saran otomatis (tanpa AI)" berarti sumbernya aturan bawaan, bukan keluaran model.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 16. Penutup -->
 <section class="slide title-slide" style="padding-top:200px">
   <p class="tag">Penutup</p>
   <h1>Terima kasih</h1>

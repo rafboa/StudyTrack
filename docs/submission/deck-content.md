@@ -2,7 +2,7 @@
 
 Sumber tunggal isi: `docs/superpowers/specs/2026-11-15-deadline-reminder-design.md` bagian 4.
 Tampilan slide ada di `deck.html`; PDF diekspor dari file itu (`StudyTrack-Deck.pdf`).
-Teks bertanda `[PLACEHOLDER Task 8: ...]` belum tersedia dan diisi pada Task 8 (screenshot, URL publik, hasil test). Jangan diisi dengan karangan.
+Penanda `[ISI ...]` dan `[NAMA PESERTA ...]` diisi peserta sebelum merekam (tautan repositori, URL publik setelah deploy, hasil uji kunci Gemini, nama). Jangan diisi dengan karangan. Hasil test dan screenshot di deck berasal dari proses nyata.
 
 ---
 
@@ -111,47 +111,55 @@ Keluaran: `{ tasks: [..., kategori, sisa_menit, mata_kuliah], server_time }`.
 
 ## Slide 9. Tugas 2, Layer C: Frontend
 
-`TaskCard` membaca `task.kategori` dari respons backend.
+`TaskCard` membaca `task.kategori` dari respons backend. Tiga screenshot aplikasi nyata (`screenshots/normal.png`, `mendekati.png`, `overdue.png`):
 
-- `normal`: card seperti sekarang, tidak berubah.
-- `mendekati`: card disorot + badge "Mendekati Deadline" dengan sisa waktu (contoh "sisa 1 j 0 m").
-- `overdue`: card yang tampil berbeda + badge "Terlambat" dengan keterlambatannya.
+- `normal` (sisa 24 jam atau lebih): card biasa, hanya badge status "Belum".
+- `mendekati` (kurang dari 24 jam): tepi dan latar card disorot, badge "Mendekati Deadline", teks sisa waktu "Sisa 1 j 59 m".
+- `overdue` (waktu habis): tepi dan latar merah, badge "Terlambat", teks "Terlambat 131 hr 2 j".
 
-Sketsa tiga card: normal / mendekati / overdue (lihat `deck.html`).
+**Kondisi penentu tampilan:** `task.kategori` dari backend. Refresh tiap 60 detik dan saat fokus; penanda selalu memuat teks.
 
-**Kondisi penentu tampilan:** nilai `task.kategori` (`normal` | `mendekati` | `overdue`) dari backend. Halaman mengambil ulang tiap 60 detik dan saat fokus. Penanda selalu memuat teks, tidak hanya warna.
-
-`[PLACEHOLDER Task 8: screenshot aplikasi nyata untuk tiga kondisi card]`
+Sumber gambar: aplikasi nyata pada 15 Nov 2026 sekitar 02.14 WIB (`now` = jam server): data seed (semua sudah terlambat) ditambah satu tugas bertenggat sekitar 2 jam lagi dan satu tugas bertenggat 3 hari lagi.
 
 ---
 
 ## Slide 10. Tugas 3, Verifikasi (1 dari 2)
 
-Data acuan: tabel contoh tugas di guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), `now` tetap.
+Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), `now` tetap. Semua test ada di `backend/test/deadline.test.js` dan lulus; angka `sisa_menit` adalah nilai yang di-assert test.
 
 | No. | Kondisi / Input | Hasil yang Diharapkan | Jenis Skenario |
 |---|---|---|---|
-| 1 | `now = 2026-07-02 09:00` WIB; tugas 2 deadline `07-02 10:00` | Tugas 2 `mendekati` (sisa sekitar 60 menit) dan tampil paling atas | Positif |
-| 2 | `now` sama; tugas 1 (`07-03 23:59`) dan tugas 3 (`07-06 23:59`) | Keduanya `normal` (sisa sekitar 39 jam dan lebih), urut `created_at` | Positif |
-| 3 | `now = 2026-07-04 00:00`; tugas 1 dan tugas 2 | Keduanya `overdue`, tetap tampil, dengan penanda overdue, bukan penanda mendekati | Negatif |
-| 4 | Tugas 2 dengan `status = selesai` dan `now = 2026-07-02 09:00` | Tetap `mendekati` (status tidak mengubah kategori); card juga menampilkan badge status "Selesai" | Edge Case |
+| 1 | `now = 2026-07-02 09:00` WIB; tugas 2 deadline `07-02 10:00` | Tugas 2 `mendekati`, `sisa_menit = 60`, tampil paling atas (urutan id 2, 3, 1). Test: `seed at 2026-07-02T09:00+07:00` | Positif |
+| 2 | `now` sama; tugas 1 (`07-03 23:59`) dan tugas 3 (`07-06 23:59`) | Keduanya `normal`; tugas 1 `sisa_menit = 2339` (sekitar 39 jam), tugas 3 lebih jauh; urut `created_at` terbaru dulu. Test: sama dengan skenario 1 | Positif |
+| 3 | `now = 2026-07-04 00:00`; tugas 1 dan tugas 2 | Keduanya `overdue` (tugas 1 `-1`, tugas 2 `-2280` menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati. Test: `seed at 2026-07-04T00:00+07:00` | Negatif |
+| 4 | Tugas 2 dengan `status = selesai` dan `now = 2026-07-02 09:00` | Tetap `mendekati` (status tidak mengubah kategori); card juga memuat badge status "Selesai". Test: `selesai is still flagged` | Edge Case |
 
 ## Slide 11. Tugas 3, Verifikasi (2 dari 2)
 
 | No. | Kondisi / Input | Hasil yang Diharapkan | Jenis Skenario |
 |---|---|---|---|
-| 5 | `now = 2026-07-01 10:00`; tugas 2 (tepat 24 jam tersisa) | `normal` (harus kurang dari 24 jam secara ketat) | Edge Case |
-| 6 | `now = 2026-07-02 10:00`; tugas 2 (sisa tepat 0) | `overdue` | Edge Case |
-| 7 | Zona waktu host server diatur ke UTC | Hasil sama dengan host WIB | Edge Case |
-| 8 | Tugas dekat deadline milik pengguna lain | Tidak dikembalikan (F04: hanya tugas sendiri) | Negatif |
+| 5 | `now = 2026-07-01 10:00`; tugas 2 (tepat 24 jam tersisa) | `normal`, `sisa_menit = 1440` (harus kurang dari 24 jam secara ketat); satu menit kemudian `mendekati`, `1439`. Test: `exactly 24h is normal` | Edge Case |
+| 6 | `now = 2026-07-02 10:00`; tugas 2 (sisa tepat 0) | `overdue`, `sisa_menit = 0`. Test: `exactly 0 is overdue` | Edge Case |
+| 7 | Zona waktu host server diatur ke UTC | Hasil sama dengan host WIB (juga diuji dengan `America/Los_Angeles`). Test: `host timezone irrelevant` | Edge Case |
+| 8 | Tugas dekat deadline milik pengguna lain | Tidak dikembalikan (F04: hanya tugas sendiri). Test: `only returns the logged-in user's own tasks` (`tasks.api.test.js`) | Negatif |
 
-Ringkasan jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4, 5, 6, 7).
-
-`[PLACEHOLDER Task 8: hasil unit test dan screenshot hasil tes yang dijalankan]`
+Ringkasan jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4, 5, 6, 7). Skenario 1 sampai 7 ada di `deadline.test.js`, skenario 8 di `tasks.api.test.js`.
 
 ---
 
-## Slide 12. Konsistensi antar layer
+## Slide 12. Tugas 3, Hasil pengujian
+
+| Perintah | Hasil |
+|---|---|
+| `cd backend && npm test` | 57 test lulus, 0 gagal, 0 dilewati (7 berkas) |
+| `cd frontend && npm test` | 4 test lulus, 0 gagal (format sisa waktu) |
+| `npm --prefix frontend run build` | Build berhasil (Vite 8.1.0, 80 modul) |
+
+Rincian backend: `deadline.test.js` 16, `advice.test.js` 10, `ai.api.test.js` 6, `llm.test.js` 9, `static.test.js` 7, `config.test.js` 5, `tasks.api.test.js` 4. Test AI memakai provider tiruan; tidak ada pemanggilan Gemini sungguhan di dalam test.
+
+---
+
+## Slide 13. Ringkasan: konsistensi antar layer
 
 | Data (Database) | Backend | Frontend |
 |---|---|---|
@@ -165,16 +173,22 @@ Backend menjadi satu-satunya tempat kategori dan urutan dihitung. Frontend hanya
 
 ---
 
-## Slide 13. Bonus
+## Slide 14. Bonus
 
-- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **Kode nyata:** rancangan Tugas 2 direalisasikan di starter kit. `[PLACEHOLDER Task 8: tautan repositori]`
-- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **AI/LLM:** saran urutan belajar (`POST /api/ai/prioritas`): Gemini, lalu model open-source gratis, lalu pesan berbasis aturan jika keduanya gagal. Kunci hanya di environment variable.
-- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **Deployment:** satu layanan Render (Express menyajikan build React), satu URL publik. `[PLACEHOLDER Task 8: URL publik]` Batasan: `db.json` di free tier kembali ke seed saat redeploy/restart.
-- `[PLACEHOLDER Task 8: konfirmasi selesai, hapus bila tidak dikerjakan]` **Git history rapi:** branch fitur dan satu commit deskriptif per langkah.
+- **Kode nyata:** dibangun. Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 57 test backend dan 4 test frontend yang lulus. Repositori: `[ISI: tautan repositori GitHub]`
+- **AI/LLM:** dibangun dan diuji unit dengan provider tiruan. `POST /api/ai/prioritas` memakai rantai Gemini, lalu model open-source, lalu aturan. Fallback berbasis aturan sudah terverifikasi (slide 15). Pemanggilan Gemini sungguhan belum dicoba (menunggu kunci API). `[ISI setelah uji kunci: sumber gemini terkonfirmasi]`
+- **Deployment:** siap deploy. Blueprint Render (satu layanan, Express menyajikan build React) dan mode production sudah diuji lokal. Belum ada URL publik. `[ISI: URL publik Render setelah deploy]` Batasan: `db.json` di free tier kembali ke seed saat redeploy atau restart.
+- **Git history rapi:** branch fitur terpisah dari `main`, satu commit baseline (`5db4a7e`) lalu 12 commit deskriptif per langkah (`feat`, `fix`, `style`, `docs`).
 
 ---
 
-## Slide 14. Penutup
+## Slide 15. Bonus AI: tampilan nyata
+
+Screenshot `screenshots/advice.png`: panel "Saran Urutan Belajar" dengan hasil saran. Tombol "Minta Saran Prioritas" memanggil `POST /api/ai/prioritas`; server memilih tugas mendekati dan terlambat milik pengguna yang login; satu panggilan per pengguna tiap 10 detik; kunci API hanya di environment variable. Keterangan "Saran otomatis (tanpa AI)" berarti sumbernya aturan bawaan, bukan keluaran model.
+
+---
+
+## Slide 16. Penutup
 
 Ringkasan: kategori diturunkan di backend (tanpa ubah skema), urutan Mendekati lalu Overdue lalu Normal, penanda berlabel teks, 8 skenario verifikasi (Positif, Negatif, Edge Case).
 Terima kasih.

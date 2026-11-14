@@ -2,7 +2,7 @@
 
 Starter kit untuk bonus **Implementasi kode nyata** pada studi kasus seleksi Software Engineer, Academya Arkavidia 11.0.
 
-Isinya adalah kondisi StudyTrack saat ini: empat modul yang sudah berjalan (autentikasi, manajemen mata kuliah, manajemen tugas, dan halaman daftar tugas). Fitur **Reminder Tugas Mendekati Deadline** sengaja belum ada karena itulah yang perlu Anda rancang dan kerjakan.
+Isinya adalah StudyTrack dengan empat modul bawaan (autentikasi, manajemen mata kuliah, manajemen tugas, dan halaman daftar tugas) **ditambah fitur Reminder Tugas Mendekati Deadline** yang sudah dikerjakan: kategori deadline per tugas, penanda pada card, urutan baru, serta saran urutan belajar berbasis AI sebagai bonus. Rancangan lengkapnya ada di `docs/superpowers/specs/2026-11-15-deadline-reminder-design.md`.
 
 > Starter kit ini bersifat opsional. Anda boleh memakai stack lain selama struktur datanya konsisten dengan Bagian 1 (Konteks Aplikasi) pada dokumen studi kasus.
 
@@ -21,7 +21,14 @@ Isinya adalah kondisi StudyTrack saat ini: empat modul yang sudah berjalan (aute
 - Registrasi, login, dan logout. Password di-hash dengan bcrypt dan sesi memakai JWT.
 - Manajemen Mata Kuliah: lihat, tambah, dan hapus di UI. Endpoint ubah (`PUT`) juga tersedia di API.
 - Manajemen Tugas per mata kuliah: lihat, tambah, ubah status (belum/selesai), dan hapus di UI. Endpoint ubah (`PUT`) juga tersedia di API.
-- Halaman Daftar Tugas: seluruh tugas pengguna lintas mata kuliah, terurut dari `created_at` terbaru.
+- Halaman Daftar Tugas: seluruh tugas pengguna lintas mata kuliah.
+
+Fitur Reminder Tugas Mendekati Deadline:
+
+- Setiap tugas diberi `kategori` (`mendekati`, `overdue`, atau `normal`) dan `sisa_menit` yang **dihitung di backend** saat request. Skema data tidak berubah. Aturannya ada di bagian "Aturan Kategori Deadline".
+- Daftar tugas diurutkan mendekati, lalu overdue, lalu normal. Card tugas menampilkan penanda berlabel teks ("Mendekati Deadline" atau "Terlambat") dan sisa waktunya. Halaman mengambil ulang data tiap 60 detik dan saat jendela mendapat fokus.
+- Panel **Saran Urutan Belajar** (bonus AI): tombol "Minta Saran Prioritas" memanggil `POST /api/ai/prioritas`. Penyedia saran berurutan: Gemini, lalu model open-source (API kompatibel OpenAI), lalu pesan berbasis aturan bila keduanya tidak tersedia atau gagal.
+- Frontend hasil build bisa disajikan oleh Express dan di-deploy sebagai satu layanan di Render (lihat bagian Deployment).
 
 ## Cara Menjalankan
 
@@ -48,7 +55,35 @@ npm run dev
 
 Frontend berjalan di `http://localhost:5173`. Selama mode development, request `/api/*` otomatis diteruskan ke backend oleh proxy Vite.
 
-### 3. Akun Demo
+### 3. Variabel Environment (opsional, untuk saran AI)
+
+Saran urutan belajar bekerja tanpa konfigurasi apa pun karena memakai aturan bawaan. Untuk memakai model AI, isi variabel berikut di `backend/.env` (nilainya milik Anda sendiri, jangan di-commit):
+
+| Variabel | Keterangan |
+| --- | --- |
+| `GEMINI_API_KEY` | Kunci API Gemini (Google AI Studio). Provider pertama. |
+| `GEMINI_MODEL` | Nama model Gemini. Kosong berarti model bawaan. |
+| `FALLBACK_LLM_BASE_URL` | Alamat API kompatibel OpenAI (mis. OpenRouter atau Groq) untuk model open-source. |
+| `FALLBACK_LLM_API_KEY` | Kunci API untuk provider cadangan. |
+| `FALLBACK_LLM_MODEL` | Nama model open-source untuk provider cadangan. |
+
+Tiap provider hanya dipakai bila kuncinya diisi.
+
+### 4. Menjalankan Test
+
+```bash
+cd backend
+npm test
+```
+
+```bash
+cd frontend
+npm test
+```
+
+Test backend memakai `node --test` (kategori dan urutan deadline, endpoint tugas dan AI, provider LLM dengan provider tiruan, penyajian frontend, konfigurasi production). Test frontend memeriksa format sisa waktu. Tidak ada test yang memanggil layanan AI sungguhan. Build frontend: `npm --prefix frontend run build`.
+
+### 5. Akun Demo
 
 File `backend/db.json` dibuat otomatis saat backend pertama kali dijalankan dan langsung berisi data seed. Anda bisa masuk dengan akun berikut:
 
@@ -103,7 +138,7 @@ Data awal sama dengan contoh pada dokumen studi kasus:
 | 2 | Project 3: BSTMap Implementation | CS 61B, Data Structures | 2026-07-02 10:00 | belum |
 | 3 | Sprint 2: Backend API Integration | CS 169, Software Engineering | 2026-07-06 23:59 | belum |
 
-Tanggal pada data seed mengikuti dokumen, sehingga semuanya sudah lewat dari tanggal pengerjaan Anda. Untuk mencoba fitur yang Anda buat, tambahkan tugas baru dengan deadline yang dekat lewat form **Tambah Tugas**.
+Tanggal pada data seed mengikuti dokumen, sehingga di aplikasi semuanya tampil sebagai terlambat (`overdue`). Untuk melihat kategori `mendekati`, tambahkan tugas baru dengan deadline kurang dari 24 jam lagi lewat form **Tambah Tugas**; deadline yang lebih jauh tampil sebagai `normal`.
 
 ## Ringkasan API
 
@@ -119,46 +154,113 @@ Semua endpoint di bawah `/api`. Endpoint bertanda "Ya" membutuhkan header `Autho
 | `POST` | `/courses` | Ya | Tambah mata kuliah |
 | `PUT` | `/courses/:id` | Ya | Ubah mata kuliah |
 | `DELETE` | `/courses/:id` | Ya | Hapus mata kuliah beserta tugasnya |
-| `GET` | `/tasks` | Ya | Daftar seluruh tugas, lintas mata kuliah |
+| `GET` | `/tasks` | Ya | Daftar seluruh tugas pengguna, lintas mata kuliah, dengan `kategori` dan `sisa_menit`, sudah terurut |
 | `GET` | `/tasks/:id` | Ya | Detail satu tugas |
 | `POST` | `/tasks` | Ya | Tambah tugas (`mata_kuliah_id`, `judul`, `deadline`, `deskripsi?`) |
 | `PUT` | `/tasks/:id` | Ya | Ubah tugas, termasuk status |
 | `DELETE` | `/tasks/:id` | Ya | Hapus tugas |
+| `POST` | `/ai/prioritas` | Ya | Saran urutan belajar untuk tugas mendekati dan terlambat |
 | `POST` | `/dev/reset` | Tidak | Reset data ke seed (hanya di luar production) |
+
+### `GET /api/tasks`
+
+Mengembalikan objek berisi daftar tugas yang sudah terurut dan waktu server:
+
+```json
+{
+  "tasks": [
+    {
+      "id": 2,
+      "judul": "Project 3: BSTMap Implementation",
+      "deadline": "2026-07-02T10:00:00",
+      "status": "belum",
+      "mata_kuliah_id": 2,
+      "mata_kuliah": "Data Structures",
+      "kategori": "mendekati",
+      "sisa_menit": 60
+    }
+  ],
+  "server_time": "2026-07-02T02:00:00.000Z"
+}
+```
+
+Contoh di atas dipersingkat (field lain seperti `deskripsi`, `created_at`, dan `user_id` tetap ada). `server_time` berformat ISO 8601 UTC. `sisa_menit` bernilai `null` bila `deadline` tidak bisa dibaca; tugas itu masuk kelompok `normal`.
+
+### `POST /api/ai/prioritas`
+
+Tanpa body. Server sendiri memilih tugas milik pengguna yang `kategori`-nya `mendekati` atau `overdue` dan belum selesai, lalu meminta saran urutan pengerjaan.
+
+- `200` `{ "saran": "...", "sumber": "gemini" | "fallback-llm" | "rule" | "none", "jumlah_tugas": 4 }`. `sumber` menyebut siapa yang menjawab: `gemini`, model open-source cadangan (`fallback-llm`), atau pesan berbasis aturan (`rule`). Nilai `none` dipakai bila tidak ada tugas yang perlu disarankan.
+- `429` bila pengguna yang sama memanggil lagi dalam 10 detik (batas laju).
+- `500` untuk kegagalan internal; isi error tidak dikirim ke klien dan batas laju dilepas.
+
+Pesan error dan kunci API provider tidak pernah dikirim ke klien. Hanya field tugas (judul, mata kuliah, kategori, sisa waktu) yang dikirim ke provider AI, bukan data profil.
+
+## Aturan Kategori Deadline
+
+Kategori dihitung dari `deadline` dan waktu server saat ini, bukan disimpan di database. `deadline` bertipe waktu lokal tanpa zona dan **selalu dibaca sebagai WIB (+07:00)**, sehingga zona waktu server tidak berpengaruh.
+
+Misalkan `sisa` = `deadline` dikurangi waktu sekarang:
+
+| Kondisi | `kategori` |
+| --- | --- |
+| `sisa <= 0` (tepat 0 termasuk) | `overdue` |
+| `0 < sisa < 24 jam` (kurang dari 24 jam secara ketat) | `mendekati` |
+| `sisa >= 24 jam` (tepat 24 jam termasuk) | `normal` |
+
+- `status` diabaikan: tugas yang sudah `selesai` tetap mendapat kategori dan penanda sesuai deadline-nya.
+- `sisa_menit` dibulatkan ke arah nol (`trunc`); bernilai nol atau negatif bila `overdue`.
+- Urutan daftar: `mendekati` (paling dekat dulu), lalu `overdue` (yang paling baru lewat dulu), lalu `normal` (`created_at` terbaru dulu). Bila sama, urut `id` naik.
 
 ## Struktur Proyek
 
 ```
 studytrack-baseline/
+├── render.yaml              # Blueprint Render (satu layanan web)
 ├── backend/
 │   ├── server.js            # Entry point Express
+│   ├── app.js               # createApp({ now, providers, distDir }): route, static frontend
 │   ├── config.js            # Membaca .env (PORT, JWT_SECRET)
 │   ├── db.js                # Penyimpanan JSON file dan data seed
+│   ├── lib/deadline.js      # parseWIB, categorizeTask, buildTaskList (kategori dan urutan)
 │   ├── middleware/auth.js   # Verifikasi JWT
-│   └── routes/
-│       ├── auth.js          # Register, login, profil
-│       ├── courses.js       # CRUD mata kuliah
-│       └── tasks.js         # CRUD tugas (ada catatan untuk peserta)
-└── frontend/
-    └── src/
-        ├── main.jsx, App.jsx, AuthContext.jsx, api.js
-        ├── components/
-        │   ├── Navbar.jsx
-        │   └── TaskCard.jsx # Card tugas (ada catatan untuk peserta)
-        └── pages/
-            ├── Login.jsx, Register.jsx
-            ├── Courses.jsx
-            └── Tasks.jsx    # Halaman Daftar Tugas
+│   ├── routes/
+│   │   ├── auth.js          # Register, login, profil
+│   │   ├── courses.js       # CRUD mata kuliah
+│   │   ├── tasks.js         # CRUD tugas; GET / mengembalikan { tasks, server_time }
+│   │   └── ai.js            # POST /api/ai/prioritas (batas laju 10 detik)
+│   ├── services/
+│   │   ├── advice.js        # Pemilihan tugas, prompt, rantai fallback, saran aturan
+│   │   └── llm.js           # Provider Gemini dan provider kompatibel OpenAI
+│   └── test/                # node --test (deadline, API tugas dan AI, LLM, static, config)
+├── frontend/
+│   └── src/
+│       ├── main.jsx, App.jsx, AuthContext.jsx, api.js
+│       ├── lib/
+│       │   └── formatSisa.js  # Teks sisa waktu (+ formatSisa.test.js)
+│       ├── components/
+│       │   ├── Navbar.jsx
+│       │   ├── TaskCard.jsx   # Card tugas dengan penanda mendekati dan terlambat
+│       │   └── AdvicePanel.jsx # Panel Saran Urutan Belajar
+│       └── pages/
+│           ├── Login.jsx, Register.jsx
+│           ├── Courses.jsx
+│           └── Tasks.jsx    # Halaman Daftar Tugas (refresh tiap 60 detik dan saat fokus)
+└── docs/
+    ├── superpowers/         # Spesifikasi dan rencana fitur
+    └── submission/          # Deck (deck.html, PDF), naskah video, screenshot
 ```
 
 ## Titik Awal Fitur "Reminder Tugas Mendekati Deadline"
 
-Cari komentar bertuliskan **"CATATAN UNTUK PESERTA STUDI KASUS"** pada dua file berikut:
+Fitur ini sudah diimplementasikan. Penunjuk "CATATAN UNTUK PESERTA STUDI KASUS" pada starter kit sudah diganti dengan kodenya:
 
-- `backend/routes/tasks.js`
-- `frontend/src/components/TaskCard.jsx`
-
-Keduanya hanya penunjuk titik yang relevan. Anda tidak harus menaruh logika di sana, silakan sesuaikan dengan rancangan teknis Anda sendiri.
+- Logika kategori, `sisa_menit`, dan urutan: `backend/lib/deadline.js` (diuji di `backend/test/deadline.test.js`).
+- Endpoint daftar tugas: `backend/routes/tasks.js` (`GET /api/tasks`).
+- Saran urutan belajar: `backend/routes/ai.js`, `backend/services/advice.js`, dan `backend/services/llm.js`.
+- Penanda pada card: `frontend/src/components/TaskCard.jsx` dengan `frontend/src/lib/formatSisa.js`.
+- Panel saran dan refresh berkala: `frontend/src/components/AdvicePanel.jsx` dan `frontend/src/pages/Tasks.jsx`.
+- Rancangan, rencana, dan bahan presentasi: `docs/superpowers/` dan `docs/submission/`.
 
 ## Deployment ke Render
 
@@ -185,7 +287,7 @@ Hal yang perlu diketahui pada paket gratis:
 
 ## Catatan
 
-- Starter kit ini sengaja dibuat minimal. Fokus utamanya adalah fitur reminder deadline. Bonus lain pada dokumen (pemanfaatan AI/LLM, deployment, dan Git history yang rapi) bersifat opsional.
+- Starter kit ini sengaja dibuat minimal. Fitur reminder deadline sudah dikerjakan; bonus AI/LLM (saran urutan belajar) dan konfigurasi deployment Render juga sudah ada. Alamat publik belum ada sebelum Anda melakukan deploy sendiri.
 - Anda boleh memigrasikan penyimpanan dari file JSON ke database sungguhan (SQLite, PostgreSQL, dan sebagainya), tetapi itu tidak wajib.
 - **Git history.** Salin starter kit ini ke repositori Anda sendiri dan commit kondisi awalnya lebih dulu, lalu kerjakan fitur di branch terpisah dengan commit message yang deskriptif.
-- **Deployment.** Proxy Vite hanya berlaku saat `npm run dev`, jadi frontend hasil build perlu diarahkan ke URL backend (misalnya lewat `baseURL` di `frontend/src/api.js`). Ganti juga `JWT_SECRET` dengan nilai acak dan atur `NODE_ENV=production`. Penyimpanan file di layanan gratis seperti Render atau Railway umumnya bersifat sementara, sehingga `db.json` bisa hilang saat redeploy.
+- **Deployment.** Proxy Vite hanya berlaku saat `npm run dev`. Untuk production, Express menyajikan frontend hasil build dari layanan yang sama, jadi `baseURL` di `frontend/src/api.js` tidak perlu diubah. Langkah lengkapnya ada di bagian [Deployment ke Render](#deployment-ke-render) (termasuk `JWT_SECRET` dan `NODE_ENV=production`). Penyimpanan file di layanan gratis seperti Render atau Railway bersifat sementara, sehingga `db.json` kembali ke data seed saat redeploy atau restart.
