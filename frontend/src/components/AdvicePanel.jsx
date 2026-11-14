@@ -48,18 +48,24 @@ export default function AdvicePanel() {
   }
 
   return (
-    <div className="card advice-panel">
+    <div className="card advice-panel" aria-busy={loading}>
       <h2>Saran Urutan Belajar</h2>
       <button type="button" className="btn" onClick={handleClick} disabled={loading}>
         {loading ? "Memproses…" : "Minta Saran Prioritas"}
       </button>
-      {error && <p className="error">{error}</p>}
-      {saran && (
-        <>
-          <p className="advice-text">{saran}</p>
-          <p className="meta">{SUMBER_LABEL[sumber] || SUMBER_LABEL.rule}</p>
-        </>
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
       )}
+      <div aria-live="polite">
+        {sumber && (
+          <>
+            <p className="advice-text">{saran}</p>
+            <p className="meta">{SUMBER_LABEL[sumber] || SUMBER_LABEL.rule}</p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -64,9 +64,13 @@ a {
   gap: 12px;
 }
 
-.task-card .meta {
+.task-card .meta,
+.advice-panel .meta {
   color: #6b7280;
   font-size: 0.85rem;
+}
+
+.task-card .meta {
   margin-top: 4px;
 }
 
@@ -76,6 +80,7 @@ a {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
+  border: 1px solid transparent;
 }
 
 .badge.belum {
@@ -88,24 +93,34 @@ a {
   color: #065f46;
 }
 
+/* Penanda deadline: kartu diberi latar tipis dan garis tepi penuh; badge teks
+   tetap ada. Mendekati = oranye, garis 1px, badge berbingkai. Terlambat =
+   merah tua, garis 2px, badge solid (lebih berat dari mendekati). */
 .badge.mendekati {
-  background: #dc2626;
-  color: #ffffff;
+  background: #ffffff;
+  color: #9a3412;
+  border: 1px solid #c2410c;
 }
 
 .badge.overdue {
-  background: #fff;
-  color: #374151;
-  border: 1px solid #6b7280;
-  border-style: dashed;
+  background: #991b1b;
+  color: #ffffff;
+  border: 1px solid #991b1b;
 }
 
 .task-mendekati {
-  border-left: 4px solid #dc2626;
+  background: #fff7ed;
+  border: 1px solid #c2410c;
 }
 
 .task-overdue {
-  border-left: 4px dashed #6b7280;
+  background: #fef2f2;
+  border: 2px solid #991b1b;
+}
+
+.task-mendekati .meta,
+.task-overdue .meta {
+  color: #4b5563;
 }
 
 .task-card .sisa {
@@ -118,14 +133,7 @@ a {
 }
 
 .advice-panel .meta {
-  color: #6b7280;
-  font-size: 0.85rem;
   margin: 0;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 form {
@@ -159,6 +167,12 @@ button[type="submit"],
 button[type="submit"]:hover,
 .btn:hover {
   opacity: 0.9;
+}
+
+.btn:disabled,
+.btn:disabled:hover {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .error {
