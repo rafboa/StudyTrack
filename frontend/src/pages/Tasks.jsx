@@ -26,6 +26,20 @@ export default function Tasks() {
     loadData();
   }, []);
 
+  // Muat ulang tiap menit dan saat tab kembali aktif agar kategori mengikuti waktu.
+  // Error pada refresh latar belakang diabaikan (data lama tetap tampil).
+  useEffect(() => {
+    const refresh = () => {
+      loadData().catch(() => {});
+    };
+    const timer = setInterval(refresh, 60000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
