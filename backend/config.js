@@ -10,7 +10,7 @@ export const PORT = process.env.PORT || 4000;
 
 // Nilai bawaan hanya untuk pengembangan lokal. Di production, JWT_SECRET wajib diisi
 // supaya token tidak bisa dipalsukan memakai nilai bawaan yang bersifat publik.
-if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
+if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET?.trim()) {
   throw new Error("JWT_SECRET wajib diisi saat NODE_ENV=production.");
 }
 
