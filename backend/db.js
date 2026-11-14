@@ -19,7 +19,9 @@ import { fileURLToPath } from "url";
 import bcrypt from "bcryptjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.join(__dirname, "db.json");
+// Lokasi berkas bisa diganti lewat env `DB_PATH` (dipakai pengujian agar
+// db.json asli tidak tersentuh).
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, "db.json");
 
 /**
  * Membuat data awal (seed) yang sesuai dengan contoh data pada dokumen studi
