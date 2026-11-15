@@ -2,8 +2,7 @@
 
 Starter kit untuk bonus **Implementasi kode nyata** pada studi kasus seleksi Software Engineer, Academya Arkavidia 11.0.
 
-Isinya adalah StudyTrack dengan empat modul bawaan (autentikasi, manajemen mata kuliah, manajemen tugas, dan halaman daftar tugas) **ditambah fitur Reminder Tugas Mendekati Deadline** yang sudah dikerjakan: kategori deadline per tugas, penanda pada card, urutan baru, serta saran urutan belajar berbasis AI sebagai bonus. Rancangan lengkapnya ada di `docs/superpowers/specs/2026-11-15-deadline-reminder-design.md`.
-
+Isinya adalah StudyTrack dengan empat modul bawaan (autentikasi, manajemen mata kuliah, manajemen tugas, dan halaman daftar tugas) **ditambah fitur Reminder Tugas Mendekati Deadline** yang sudah dikerjakan: kategori deadline per tugas, penanda pada card, urutan baru, serta saran urutan belajar berbasis AI sebagai bonus.
 > Starter kit ini bersifat opsional. Anda boleh memakai stack lain selama struktur datanya konsisten dengan Bagian 1 (Konteks Aplikasi) pada dokumen studi kasus.
 
 ## Stack
@@ -252,9 +251,6 @@ studytrack-baseline/
 │           ├── Login.jsx, Register.jsx
 │           ├── Courses.jsx
 │           └── Tasks.jsx    # Halaman Daftar Tugas
-└── docs/
-    ├── superpowers/         # Spesifikasi dan rencana fitur
-    └── submission/          # Deck (deck.html, PDF), naskah video, screenshot
 ```
 
 ## Titik Awal Fitur "Reminder Tugas Mendekati Deadline"
@@ -266,7 +262,6 @@ Fitur ini sudah diimplementasikan. Penunjuk "CATATAN UNTUK PESERTA STUDI KASUS" 
 - Saran urutan belajar: `backend/routes/ai.js`, `backend/services/advice.js`, dan `backend/services/llm.js`.
 - Penanda pada card: `frontend/src/components/TaskCard.jsx` dengan `frontend/src/lib/formatSisa.js`.
 - Panel saran dan refresh berkala: `frontend/src/components/AdvicePanel.jsx` dan `frontend/src/pages/Tasks.jsx`.
-- Rancangan, rencana, dan bahan presentasi: `docs/superpowers/` dan `docs/submission/`.
 
 ## Deployment ke Render
 

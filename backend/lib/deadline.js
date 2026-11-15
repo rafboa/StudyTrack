@@ -1,7 +1,7 @@
 /**
  * Kategori deadline tugas, dihitung per permintaan (tidak disimpan).
  *
- * Aturan (lihat docs/superpowers/specs/2026-11-15-deadline-reminder-design.md):
+ * Aturan:
  *   - sisa waktu <= 0          -> "overdue"
  *   - 0 < sisa waktu < 24 jam  -> "mendekati"
  *   - selain itu               -> "normal" (tepat 24 jam masih "normal")
