@@ -1,124 +1,83 @@
-import React, { useEffect, useState } from "react";
-import api from "../api.js";
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import api, { isSessionExpired } from "../api.js";
 import AdvicePanel from "../components/AdvicePanel.jsx";
-import Navbar from "../components/Navbar.jsx";
-import TaskCard from "../components/TaskCard.jsx";
+import AppShell from "../components/AppShell.jsx";
+import TaskForm from "../components/TaskForm.jsx";
+import TaskList from "../components/TaskList.jsx";
+import Button from "../components/ui/Button.jsx";
+import { useTaskData } from "../lib/useTaskData.js";
+
+/** Memindahkan fokus ke field pertama form tambah tugas. */
+function focusTaskForm() {
+  const form = document.getElementById("tambah-tugas");
+  form?.scrollIntoView({ block: "start" });
+  form?.querySelector("select, input")?.focus({ preventScroll: true });
+}
 
 /**
- * Halaman Daftar Tugas: form tambah tugas dan daftar seluruh tugas pengguna
- * lintas mata kuliah, sesuai urutan yang dikirim backend.
+ * Halaman Daftar Tugas: daftar seluruh tugas pengguna lintas mata kuliah,
+ * sesuai urutan yang dikirim backend, ditambah form tambah tugas dan panel saran.
  */
 export default function Tasks() {
-  const [tasks, setTasks] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [courseId, setCourseId] = useState("");
-  const [judul, setJudul] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [error, setError] = useState("");
+  const { tasks, courses, status, reload, retry, mounted } = useTaskData();
+  const [actionError, setActionError] = useState("");
 
-  async function loadData() {
-    const [tasksRes, coursesRes] = await Promise.all([api.get("/tasks"), api.get("/courses")]);
-    setTasks(tasksRes.data.tasks);
-    setCourses(coursesRes.data.courses);
-  }
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  // Muat ulang tiap menit dan saat tab kembali aktif agar kategori mengikuti waktu.
-  // Error pada refresh latar belakang diabaikan (data lama tetap tampil).
-  useEffect(() => {
-    const refresh = () => {
-      loadData().catch(() => {});
-    };
-    const timer = setInterval(refresh, 60000);
-    window.addEventListener("focus", refresh);
-    return () => {
-      clearInterval(timer);
-      window.removeEventListener("focus", refresh);
-    };
-  }, []);
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
-    if (!courseId) {
-      setError("Pilih mata kuliah terlebih dahulu.");
+  async function act(request, fallback) {
+    setActionError("");
+    try {
+      await request();
+    } catch (err) {
+      if (isSessionExpired(err) || !mounted.current) return;
+      setActionError(err.response?.data?.error || fallback);
       return;
     }
     try {
-      await api.post("/tasks", { mata_kuliah_id: courseId, judul, deskripsi, deadline });
-      setJudul("");
-      setDeskripsi("");
-      setDeadline("");
-      loadData();
+      await reload();
     } catch (err) {
-      setError(err.response?.data?.error || "Gagal menambahkan tugas.");
+      if (isSessionExpired(err) || err.stale || !mounted.current) return;
+      setActionError("Perubahan sudah tersimpan, tetapi daftar belum diperbarui. Daftar akan diperbarui otomatis dalam 1 menit.");
     }
   }
 
-  async function handleToggleStatus(task) {
+  function handleToggleStatus(task) {
     const newStatus = task.status === "selesai" ? "belum" : "selesai";
-    await api.put(`/tasks/${task.id}`, { status: newStatus });
-    loadData();
+    return act(
+      () => api.put(`/tasks/${task.id}`, { status: newStatus }),
+      "Status tugas belum tersimpan. Coba lagi."
+    );
   }
 
-  async function handleDelete(id) {
-    await api.delete(`/tasks/${id}`);
-    loadData();
+  function handleDelete(id) {
+    return act(() => api.delete(`/tasks/${id}`), "Tugas belum terhapus. Coba lagi.");
   }
 
   return (
-    <>
-      <Navbar />
-      <div className="container">
-        <h1>Daftar Tugas</h1>
-
-        <div className="card">
-          <h2>Tambah Tugas</h2>
-          <form onSubmit={handleSubmit}>
-            <select value={courseId} onChange={(e) => setCourseId(e.target.value)} required>
-              <option value="">-- Pilih Mata Kuliah --</option>
-              {courses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              placeholder="Judul Tugas"
-              value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              required
-            />
-            <textarea
-              placeholder="Deskripsi (opsional)"
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              rows={2}
-            />
-            <input
-              type="datetime-local"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              required
-            />
-            {error && <p className="error">{error}</p>}
-            <button type="submit">Tambah Tugas</button>
-          </form>
-        </div>
-
-        <AdvicePanel />
-
-        {tasks.length === 0 && <p>Belum ada tugas. Tambahkan tugas pertama Anda di atas.</p>}
-
-        {tasks.map((t) => (
-          <TaskCard key={t.id} task={t} onToggleStatus={handleToggleStatus} onDelete={handleDelete} />
-        ))}
+    <AppShell
+      title="Daftar Tugas"
+      description="Tugas yang deadline-nya kurang dari 24 jam tampil paling atas."
+      actions={
+        <Button icon={Plus} onClick={focusTaskForm} className="lg:hidden">
+          Tambah tugas
+        </Button>
+      }
+    >
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
+        <TaskList
+          status={status}
+          tasks={tasks}
+          hasCourses={courses.length > 0}
+          actionError={actionError}
+          onRetry={retry}
+          onAddTask={focusTaskForm}
+          onToggleStatus={handleToggleStatus}
+          onDelete={handleDelete}
+        />
+        <aside aria-label="Tambah tugas dan saran" className="flex flex-col gap-6">
+          <TaskForm courses={courses} onCreated={reload} />
+          <AdvicePanel />
+        </aside>
       </div>
-    </>
+    </AppShell>
   );
 }
