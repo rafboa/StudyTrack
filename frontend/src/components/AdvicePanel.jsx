@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import api from "../api.js";
+import { Lightbulb } from "lucide-react";
+import api, { isSessionExpired } from "../api.js";
+import Alert from "./ui/Alert.jsx";
+import Button from "./ui/Button.jsx";
+import { Card, CardContent, CardHeader } from "./ui/Card.jsx";
+import Skeleton from "./ui/Skeleton.jsx";
 
 /** Keterangan sumber saran. `rule` dan `none` sama-sama tanpa AI. */
 const SUMBER_LABEL = {
@@ -36,7 +41,10 @@ export default function AdvicePanel() {
       setSaran(res.data.saran);
       setSumber(res.data.sumber);
     } catch (err) {
-      if (!mounted.current) return;
+      if (!mounted.current || isSessionExpired(err)) return;
+      // Saran lama disembunyikan agar tidak terbaca sebagai hasil permintaan yang gagal.
+      setSaran("");
+      setSumber("");
       setError(
         err.response?.status === 429
           ? "Tunggu beberapa detik sebelum meminta saran lagi."
@@ -48,24 +56,40 @@ export default function AdvicePanel() {
   }
 
   return (
-    <div className="card advice-panel" aria-busy={loading}>
-      <h2>Saran Urutan Belajar</h2>
-      <button type="button" className="btn" onClick={handleClick} disabled={loading}>
-        {loading ? "Memproses…" : "Minta Saran Prioritas"}
-      </button>
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
-      <div aria-live="polite">
-        {sumber && (
-          <>
-            <p className="advice-text">{saran}</p>
-            <p className="meta">{SUMBER_LABEL[sumber] || SUMBER_LABEL.rule}</p>
-          </>
-        )}
-      </div>
-    </div>
+    <Card aria-labelledby="saran-judul" aria-busy={loading}>
+      <CardHeader
+        id="saran-judul"
+        title="Saran urutan belajar"
+        description="Urutan pengerjaan berdasarkan deadline tugas yang belum selesai."
+      />
+      <CardContent className="flex flex-col gap-4">
+        <Button
+          variant="secondary"
+          icon={Lightbulb}
+          onClick={handleClick}
+          loading={loading}
+          loadingText="Memproses…"
+          className="self-start"
+        >
+          Minta saran prioritas
+        </Button>
+        {error && <Alert>{error}</Alert>}
+        <div aria-live="polite" className="flex flex-col gap-2">
+          {loading && (
+            <div aria-hidden="true" className="flex flex-col gap-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          )}
+          {!loading && sumber && (
+            <>
+              <p className="max-w-prose text-sm whitespace-pre-wrap text-ink">{saran}</p>
+              <p className="text-xs text-muted">{SUMBER_LABEL[sumber] || SUMBER_LABEL.rule}</p>
+            </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

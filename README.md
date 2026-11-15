@@ -27,7 +27,7 @@ Fitur Reminder Tugas Mendekati Deadline:
 
 - Setiap tugas diberi `kategori` (`mendekati`, `overdue`, atau `normal`) dan `sisa_menit` yang **dihitung di backend** saat request. Skema data tidak berubah. Aturannya ada di bagian "Aturan Kategori Deadline".
 - Daftar tugas diurutkan mendekati, lalu overdue, lalu normal. Card tugas menampilkan penanda berlabel teks ("Mendekati Deadline" atau "Terlambat") dan sisa waktunya. Halaman mengambil ulang data tiap 60 detik dan saat jendela mendapat fokus.
-- Panel **Saran Urutan Belajar** (bonus AI): tombol "Minta Saran Prioritas" memanggil `POST /api/ai/prioritas`. Penyedia saran berurutan: Gemini, lalu model open-source (API kompatibel OpenAI), lalu pesan berbasis aturan bila keduanya tidak tersedia atau gagal.
+- Panel **Saran urutan belajar** (bonus AI): tombol "Minta saran prioritas" memanggil `POST /api/ai/prioritas`. Penyedia saran berurutan: Gemini, lalu model open-source (API kompatibel OpenAI), lalu pesan berbasis aturan bila keduanya tidak tersedia atau gagal.
 - Frontend hasil build bisa disajikan oleh Express dan di-deploy sebagai satu layanan di Render (lihat bagian Deployment).
 
 ## Cara Menjalankan
@@ -138,7 +138,7 @@ Data awal sama dengan contoh pada dokumen studi kasus:
 | 2 | Project 3: BSTMap Implementation | CS 61B, Data Structures | 2026-07-02 10:00 | belum |
 | 3 | Sprint 2: Backend API Integration | CS 169, Software Engineering | 2026-07-06 23:59 | belum |
 
-Tanggal pada data seed mengikuti dokumen, sehingga di aplikasi semuanya tampil sebagai terlambat (`overdue`). Untuk melihat kategori `mendekati`, tambahkan tugas baru dengan deadline kurang dari 24 jam lagi lewat form **Tambah Tugas**; deadline yang lebih jauh tampil sebagai `normal`.
+Tanggal pada data seed mengikuti dokumen, sehingga di aplikasi semuanya tampil sebagai terlambat (`overdue`). Untuk melihat kategori `mendekati`, tambahkan tugas baru dengan deadline kurang dari 24 jam lagi lewat form **Tambah tugas**; deadline yang lebih jauh tampil sebagai `normal`.
 
 ## Ringkasan API
 
@@ -235,17 +235,23 @@ studytrack-baseline/
 │   └── test/                # node --test (deadline, API tugas dan AI, LLM, static, config)
 ├── frontend/
 │   └── src/
-│       ├── main.jsx, App.jsx, AuthContext.jsx, api.js
+│       ├── main.jsx, App.jsx, AuthContext.jsx, api.js  # api.js: token + penanganan 401 (sesi berakhir)
+│       ├── index.css          # Tailwind v4 + design tokens (@theme)
 │       ├── lib/
-│       │   └── formatSisa.js  # Teks sisa waktu (+ formatSisa.test.js)
+│       │   ├── formatSisa.js  # Teks sisa waktu (+ formatSisa.test.js)
+│       │   ├── deadline.js    # Parse dan format deadline sebagai WIB
+│       │   ├── useForm.js, validate.js  # Validasi formulir inline
+│       │   └── useTaskData.js # Muat tugas + refresh 60 detik dan saat fokus
 │       ├── components/
-│       │   ├── Navbar.jsx
+│       │   ├── ui/            # Button, Field, Badge, Alert, Card, Skeleton, EmptyState
+│       │   ├── AppShell.jsx, AuthLayout.jsx, Navbar.jsx, ConnectionError.jsx
+│       │   ├── TaskList.jsx, TaskForm.jsx, CourseRow.jsx
 │       │   ├── TaskCard.jsx   # Card tugas dengan penanda mendekati dan terlambat
-│       │   └── AdvicePanel.jsx # Panel Saran Urutan Belajar
+│       │   └── AdvicePanel.jsx # Panel Saran urutan belajar
 │       └── pages/
 │           ├── Login.jsx, Register.jsx
 │           ├── Courses.jsx
-│           └── Tasks.jsx    # Halaman Daftar Tugas (refresh tiap 60 detik dan saat fokus)
+│           └── Tasks.jsx    # Halaman Daftar Tugas
 └── docs/
     ├── superpowers/         # Spesifikasi dan rencana fitur
     └── submission/          # Deck (deck.html, PDF), naskah video, screenshot
