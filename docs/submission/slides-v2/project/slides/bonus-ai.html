@@ -2,14 +2,14 @@
 <div class="topbar">
 <p class="brand">STUDYTRACK</p>
 <div class="spacer"></div>
-<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">15</p><p class="plat-l">/ 16</p></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">14</p><p class="plat-l">/ 15</p></div>
 </div>
-<h2>Bonus AI — tampilan nyata</h2>
+<h2>Saran urutan belajar — tampilan nyata</h2>
 <div style="display:flex; gap:40px; align-items:flex-start">
 <img class="shot" src="/_blob/44743847729cbb8593e404d22758b630" alt="Panel Saran urutan belajar dari aplikasi StudyTrack dengan tombol Minta saran prioritas, daftar tiga tugas (Kuis 5: Normalisasi, Sprint 2: Backend API Integration, Project 3: BSTMap Implementation), dan keterangan Saran otomatis (tanpa AI)" style="width:700px; height:765px">
 <div style="flex:1; display:flex; flex-direction:column; gap:20px">
 <p class="chip st">SUMBER: ATURAN</p>
-<p class="rtext">Keterangan “Saran otomatis (tanpa AI)” berarti sumbernya aturan bawaan, bukan keluaran model.</p>
+<p class="rtext">Keterangan “Saran otomatis (tanpa AI)” berarti sumbernya aturan bawaan, bukan keluaran model. Pemanggilan Gemini sungguhan belum dicoba (menunggu kunci API).</p>
 <div class="rows">
 <div class="row" style="padding:16px 22px"><p class="rsub">Tombol “Minta saran prioritas” memanggil <span class="id">POST /api/ai/prioritas</span></p></div>
 <div class="row" style="padding:16px 22px"><p class="rsub">Server memilih tugas mendekati dan terlambat milik pengguna yang login</p></div>
@@ -19,5 +19,5 @@
 <p class="note">Screenshot <span class="id">screenshots-v2/advice.png</span>: panel “Saran urutan belajar” dengan hasil saran.</p>
 </div>
 </div>
-<aside>Panel Saran urutan belajar. Tombol Minta saran prioritas memanggil POST /api/ai/prioritas; server memilih tugas mendekati dan terlambat milik pengguna yang login; satu panggilan per pengguna tiap 10 detik; kunci API hanya di environment variable. Keterangan Saran otomatis (tanpa AI) berarti sumbernya aturan bawaan, bukan keluaran model.</aside>
+<aside>Panel Saran urutan belajar. Tombol Minta saran prioritas memanggil POST /api/ai/prioritas; server memilih tugas mendekati dan terlambat milik pengguna yang login; satu panggilan per pengguna tiap 10 detik; kunci API hanya di environment variable. Keterangan Saran otomatis (tanpa AI) berarti sumbernya aturan bawaan, bukan keluaran model. Pemanggilan Gemini sungguhan belum dicoba karena kunci API belum ada.</aside>
 </section>
