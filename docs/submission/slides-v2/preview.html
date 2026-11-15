@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>StudyTrack Deck v2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@600..900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..600&display=swap">
+<style>
+* { margin: 0 }
+html, body { background: #E2E2E0 }
+body { font: 32px/1.2 sans-serif }
+body > section { width: 1920px !important; height: 1080px !important; overflow: hidden !important; box-sizing: border-box !important; position: relative; isolation: isolate }
+section[hidden], aside, noscript { display: none !important }
+h1 { font-size: 96px; font-weight: 600 }
+h2 { font-size: 64px; font-weight: 600 }
+h3 { font-size: 44px; font-weight: 600 }
+p, li, h1, h2, h3, td, th { overflow-wrap: break-word; text-wrap: pretty }
+table { width: 100%; border-collapse: separate; border-spacing: 0; border: solid #0003; border-width: 2px 0 0 2px }
+th, td { padding: .35em .6em; text-align: left; border: solid #0003; border-width: 0 2px 2px 0 }
+x-shape, x-icon, x-embed { display: block }
+@page { size: 1920px 1080px; margin: 0 }
+body > section { break-after: page; page-break-after: always }
+*, *::before, *::after { animation: none !important; transition: none !important }
+body.one > section { display: none }
+body.one > section.on { display: flex }
+</style>
+<link rel="stylesheet" href="project/deck.css">
+</head>
+<body>
+<section id="cover" class="board" style="gap:22px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<p class="fill">[NAMA PESERTA: diisi sendiri]</p>
+<div class="spacer"></div>
+<p class="c c-label">now =</p>
+<p class="time">09:00</p>
+<p class="plat-l">WIB · 2026-07-02</p>
+</div>
+<h1 class="dot-stmt" style="font-size:112px; margin-top:30px">Reminder Tugas<br>Mendekati Deadline</h1>
+<div style="display:flex; flex-direction:column; gap:6px">
+<p class="lead">Studi Kasus Video Assessment, Academya Arkavidia 11.0, Career Path Software Engineer</p>
+<p class="small">Perancangan teknis per layer: Database, Backend, Frontend</p>
+</div>
+<div class="rows" style="margin-top:10px">
+<div class="row-head">
+<p class="colh" style="width:330px">Tenggat</p>
+<p class="colh" style="flex:1">Tugas</p>
+<p class="colh" style="width:260px">Sisa</p>
+<p class="colh" style="width:340px">Status</p>
+</div>
+<div class="row flip" style="--i:0">
+<p class="time" style="width:330px; font-size:46px">07-02 10:00</p>
+<p class="rname" style="flex:1; font-size:36px">Project 3: BSTMap Implementation</p>
+<p class="rtext" style="width:260px">Sisa 1 j 0 m</p>
+<div style="width:340px; display:flex; gap:14px; align-items:center"><p class="chip seg">SEGERA</p><p class="rtext">· mendekati</p></div>
+</div>
+<div class="row flip" style="--i:1">
+<p class="time" style="width:330px; font-size:46px">07-06 23:59</p>
+<p class="rname" style="flex:1; font-size:36px">Sprint 2: Backend API Integration</p>
+<p class="rtext" style="width:260px">24 jam atau lebih</p>
+<div style="width:340px; display:flex; gap:14px; align-items:center"><p class="chip bj">BERJADWAL</p><p class="rtext">· normal</p></div>
+</div>
+<div class="row flip" style="--i:2">
+<p class="time" style="width:330px; font-size:46px">07-03 23:59</p>
+<p class="rname" style="flex:1; font-size:36px">Lab 4: Query Optimization Report</p>
+<p class="rtext" style="width:260px">2339 menit</p>
+<div style="width:340px; display:flex; gap:14px; align-items:center"><p class="chip bj">BERJADWAL</p><p class="rtext">· normal</p></div>
+</div>
+</div>
+<p class="note">Baris di atas adalah skenario unit test <span class="id">seed at 2026-07-02T09:00+07:00</span> (data seed, urutan id 2, 3, 1), bukan data live.</p>
+<aside>Sebut kasusnya: fitur Reminder Tugas Mendekati Deadline di StudyTrack. Tiga hasil yang akan ditunjukkan: tabel task (Tugas 1), rancangan per layer (Tugas 2), skenario verifikasi (Tugas 3). Papan di slide ini adalah skenario unit test pada 2 Juli 2026 pukul 09.00 WIB, bukan data live.</aside>
+</section>
+
+<section id="p1" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">02</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 1 · P1 — Perubahan</h2>
+<p class="lead">Kebutuhan F01 sampai F04 dipecah dengan tiga pertanyaan panduan:</p>
+<div class="rows">
+<div class="row" style="padding:24px 28px">
+<p class="rlabel" style="width:360px">1. Data baru?</p>
+<div style="width:170px; display:flex"><p class="chip st">TIDAK</p></div>
+<p class="rtext" style="flex:1">Tidak ada data baru yang disimpan. Kategori dan sisa waktu <b>dihitung</b> (diturunkan) dari <span class="id">deadline</span>, <span class="id">status</span>, dan waktu saat ini.</p>
+</div>
+<div class="row" style="padding:24px 28px">
+<p class="rlabel" style="width:360px">2. Logika baru?</p>
+<div style="width:170px; display:flex"><p class="chip st">YA</p></div>
+<p class="rtext" style="flex:1">Kategorikan setiap tugas (<span class="id">mendekati</span>, <span class="id">overdue</span>, <span class="id">normal</span>) dan urutkan per kelompok.</p>
+</div>
+<div class="row" style="padding:24px 28px">
+<p class="rlabel" style="width:360px">3. Tampilan baru?</p>
+<div style="width:170px; display:flex"><p class="chip st">YA</p></div>
+<p class="rtext" style="flex:1">Penanda berbeda untuk mendekati dan overdue pada card tugas, plus urutan tampil yang baru.</p>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="display:flex; flex-direction:column; gap:16px; border-top:2px solid #B4B4B1; padding-top:22px">
+<p class="small">Kosakata papan di deck ini (label selalu bertulisan, tidak hanya warna):</p>
+<div style="display:flex; gap:48px; align-items:center">
+<div style="display:flex; gap:16px; align-items:center"><p class="chip seg">SEGERA</p><p class="rtext">= mendekati</p></div>
+<div style="display:flex; gap:16px; align-items:center"><p class="chip tl">TERLAMBAT</p><p class="rtext">= overdue</p></div>
+<div style="display:flex; gap:16px; align-items:center"><p class="chip bj">BERJADWAL</p><p class="rtext">= normal</p></div>
+</div>
+</div>
+<aside>Tiga pertanyaan panduan. Data baru: tidak ada data baru yang disimpan, kategori dihitung dari deadline. Logika baru: ya, kategori dan urutan. Tampilan baru: ya, penanda dan urutan. Di bawah: kosakata papan yang dipakai di seluruh deck, SEGERA untuk mendekati, TERLAMBAT untuk overdue, BERJADWAL untuk normal.</aside>
+</section>
+
+<section id="p2" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">03</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 1 · P2 — Pemetaan ke Layer</h2>
+<div class="panel" style="margin-top:8px">
+<table class="tbl-xl">
+<tr class="thr"><th class="thc" style="width:40%; padding:26px 24px">Perubahan</th><th class="thc" style="width:20%; padding:26px 24px">Database</th><th class="thc" style="width:20%; padding:26px 24px">Backend</th><th class="thc" style="width:20%; padding:26px 24px">Frontend</th></tr>
+<tr><td style="padding:26px 24px">Kategori dan sisa waktu diturunkan</td><td class="soft" style="padding:26px 24px">Tidak terdampak</td><td style="padding:26px 24px">Terdampak</td><td class="soft" style="padding:26px 24px">Tidak terdampak</td></tr>
+<tr><td style="padding:26px 24px">Urutan per kelompok (mendekati, overdue, normal)</td><td class="soft" style="padding:26px 24px">Tidak terdampak</td><td style="padding:26px 24px">Terdampak</td><td class="soft" style="padding:26px 24px">Tidak terdampak</td></tr>
+<tr><td style="padding:26px 24px">Penanda visual dan refresh</td><td class="soft" style="padding:26px 24px">Tidak terdampak</td><td class="soft" style="padding:26px 24px">Tidak terdampak</td><td style="padding:26px 24px">Terdampak</td></tr>
+</table>
+</div>
+<p class="note" style="font-size:32px">Tabel ini hanya alat bantu (sesuai guidebook). Baris yang terdampak menjadi task di P3.</p>
+<aside>Tabel ini hanya alat bantu. Database tidak terdampak, Backend terdampak untuk dua baris, Frontend untuk satu baris. Baris yang terdampak menjadi task di P3.</aside>
+</section>
+
+<section id="p3a" class="board" style="padding-bottom:72px; gap:22px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">04</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 1 · P3 — Tabel Task (1 dari 2)</h2>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No</th><th class="thc" style="width:34%">Deskripsi Task</th><th class="thc" style="width:10%">Layer</th><th class="thc" style="width:14%">Ketergantungan</th><th class="thc" style="width:37%">Catatan/Asumsi</th></tr>
+<tr><td>1</td><td>Dokumentasikan keputusan <u>tidak</u> mengubah skema tugas; opsional jelaskan index <span class="id-ink">(user_id, deadline)</span> untuk DB sungguhan</td><td>Database</td><td>-</td><td>Kategori yang disimpan akan basi seiring waktu, jadi dihitung per request. <span class="id-ink">deadline</span> adalah waktu lokal tanpa zona dan diperlakukan sebagai WIB.</td></tr>
+<tr><td>2</td><td>Tulis <span class="id-ink">parseDeadlineWIB(deadline)</span> yang mengubah <span class="id-ink">YYYY-MM-DDTHH:mm</span> menjadi instan absolut dengan offset tetap <span class="id-ink">+07:00</span></td><td>Backend</td><td>-</td><td>Zona waktu host server tidak boleh berpengaruh. Di kode: <span class="id-ink">parseWIB</span>.</td></tr>
+<tr><td>3</td><td>Tulis <span class="id-ink">categorizeTask(task, now)</span> yang mengembalikan <span class="id-ink">{kategori, sisa_menit}</span>: <span class="id-ink">mendekati</span> jika <span class="id-ink">0 &lt; sisa &lt; 24 jam</span>, <span class="id-ink">overdue</span> jika <span class="id-ink">sisa &lt;= 0</span>, selain itu <span class="id-ink">normal</span>; <span class="id-ink">status</span> diabaikan</td><td>Backend</td><td>2</td><td><span class="id-ink">now</span> bisa disuntikkan untuk tes. Tepat 24 jam adalah <span class="id-ink">normal</span>. Tepat 0 adalah <span class="id-ink">overdue</span> (waktu habis). Tugas selesai ikut ditandai (keputusan desain, mengikuti F01 secara harfiah).</td></tr>
+<tr><td>4</td><td>Ubah <span class="id-ink">GET /api/tasks</span>: tambahkan <span class="id-ink">kategori</span> dan <span class="id-ink">sisa_menit</span>; urutkan mendekati (terdekat dulu), overdue (yang baru lewat dulu), normal (<span class="id-ink">created_at</span> terbaru dulu); kembalikan <span class="id-ink">server_time</span></td><td>Backend</td><td>3</td><td>Memenuhi F02/F03/F04. Pengurutan di server agar sumber kebenaran tunggal.</td></tr>
+</table>
+</div>
+<aside>Jalankan task 1 sampai 4. Task 1 Database: tidak mengubah skema. Task 2: parseDeadlineWIB dengan offset tetap +07:00. Task 3: aturan 0 kurang dari sisa kurang dari 24 jam; tepat 24 jam normal, tepat 0 overdue, status diabaikan. Task 4: urutan dihitung di server. Sebut ketergantungan dan asumsi WIB.</aside>
+</section>
+
+<section id="p3b" class="board" style="padding-bottom:72px; gap:22px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">05</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 1 · P3 — Tabel Task (2 dari 2)</h2>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No</th><th class="thc" style="width:34%">Deskripsi Task</th><th class="thc" style="width:12%">Layer</th><th class="thc" style="width:14%">Ketergantungan</th><th class="thc" style="width:35%">Catatan/Asumsi</th></tr>
+<tr><td>5</td><td>Tambahkan penanda berbasis <span class="id-ink">kategori</span> pada <span class="id-ink">TaskCard</span> (normal / mendekati / overdue) dengan label teks, tidak hanya warna</td><td>Frontend</td><td>4</td><td>Kebenaran logika lebih diutamakan daripada kompleksitas tampilan.</td></tr>
+<tr><td>6</td><td>Halaman Tugas mengambil ulang data tiap 60 detik dan saat jendela mendapat fokus</td><td>Frontend</td><td>4</td><td>Halaman yang dibiarkan terbuka tidak boleh menampilkan kategori basi.</td></tr>
+<tr><td>7</td><td>Tambahkan unit test <span class="id-ink">categorizeTask</span> memakai tabel data contoh dengan <span class="id-ink">now</span> tetap</td><td>Backend</td><td>3</td><td>Kasus yang sama menjadi tabel verifikasi Tugas 3.</td></tr>
+<tr><td>8</td><td>Tambahkan <span class="id-ink">POST /api/ai/prioritas</span> + tombol UI saran urutan belajar, dengan rantai fallback</td><td>Backend + Frontend</td><td>4</td><td>Bonus AI. Tidak diwajibkan oleh F01 sampai F04.</td></tr>
+</table>
+</div>
+<div style="flex:1"></div>
+<div class="rows">
+<div class="row" style="gap:28px">
+<p class="rsub" style="width:330px">Ketiga layer terwakili</p>
+<p class="rtext" style="flex:1"><span class="hl">Database</span> task 1</p>
+<p class="rtext" style="flex:1"><span class="hl">Backend</span> task 2, 3, 4, 7, 8</p>
+<p class="rtext" style="flex:1"><span class="hl">Frontend</span> task 5, 6, 8</p>
+</div>
+</div>
+<aside>Lanjutkan task 5 sampai 8. Task 5 dan 6: penanda berlabel teks pada TaskCard dan refresh tiap 60 detik serta saat fokus. Task 7: unit test categorizeTask dengan now tetap, kasusnya menjadi tabel verifikasi Tugas 3. Task 8: bonus AI. Ketiga layer terwakili: Database task 1, Backend task 2, 3, 4, 7, 8, Frontend task 5, 6, 8.</aside>
+</section>
+
+<section id="layer-a" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">06</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer A — Database</h2>
+<div style="display:flex; flex-direction:column; gap:4px; margin-top:8px">
+<p class="rlabel" style="font-size:46px">Keputusan:</p>
+<p class="dot-stmt" style="font-size:84px">Skema tidak berubah</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:16px">
+<p class="rtext" style="font-size:34px">Field tugas yang sudah ada, semuanya sudah cukup untuk fitur ini:</p>
+<div class="toks">
+<p class="tok">id</p><p class="tok">judul</p><p class="tok">deskripsi</p><p class="tok">deadline</p><p class="tok">status</p><p class="tok">mata_kuliah_id</p><p class="tok">created_at</p><p class="tok">user_id</p>
+</div>
+</div>
+<div class="rows" style="margin-top:10px">
+<div class="row" style="align-items:flex-start; padding:28px 30px">
+<p class="rlabel" style="width:320px; font-size:46px">Kenapa</p>
+<p class="rtext" style="flex:1; font-size:36px">Kolom <span class="id">kategori</span> yang disimpan akan salah seiring waktu berjalan dan butuh background job untuk memperbaikinya, jadi kategori <b>diturunkan</b> saat request.</p>
+</div>
+<div class="row" style="align-items:flex-start; padding:28px 30px">
+<p class="rlabel" style="width:320px; font-size:46px">DB sungguhan</p>
+<p class="rtext" style="flex:1; font-size:36px">Index <span class="id">(user_id, deadline)</span> membantu bila penyaringan dipindah ke SQL.</p>
+</div>
+<div class="row" style="align-items:flex-start; padding:28px 30px">
+<p class="rlabel" style="width:320px; font-size:46px">Zona waktu</p>
+<p class="rtext" style="flex:1; font-size:36px"><span class="id">deadline</span> disimpan sebagai waktu lokal tanpa zona dan diperlakukan sebagai WIB.</p>
+</div>
+</div>
+<aside>Skema tidak berubah. Alasannya: kategori yang disimpan akan basi seiring waktu dan butuh background job, jadi kategori diturunkan saat request. Index (user_id, deadline) hanya relevan untuk DB sungguhan. Deadline diperlakukan sebagai WIB.</aside>
+</section>
+
+<section id="layer-b1" class="board" style="padding-bottom:72px; gap:22px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">07</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer B — Backend (1 dari 2): fungsi kategori</h2>
+<div class="code">
+<p class="c">WIB_OFFSET = "+07:00"</p>
+<p class="c">parseDeadlineWIB(s)&#160;&#160;-&gt; Date&#160;&#160;&#160;<span class="cm">// di kode: parseWIB</span></p>
+<p class="c cm">&#160;&#160;// "YYYY-MM-DDTHH:mm" (tanpa detik): tambah ":00"; dengan detik: apa adanya</p>
+<p class="c cm">&#160;&#160;// lalu tempel WIB_OFFSET; format tidak dikenal -&gt; Invalid Date</p>
+<p class="c">&#160;</p>
+<p class="c">categorizeTask(task, now):</p>
+<p class="c cm">&#160;&#160;// status sengaja diabaikan: kategori hanya bergantung pada deadline</p>
+<p class="c">&#160;&#160;remainingMs = parseDeadlineWIB(task.deadline) - now</p>
+<p class="c">&#160;&#160;if remainingMs &lt;= 0:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span class="k-tl">overdue</span></p>
+<p class="c">&#160;&#160;else if remainingMs &lt; 24*3600*1000:&#160;&#160;&#160;<span class="k-seg">mendekati</span></p>
+<p class="c">&#160;&#160;else:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span class="k-bj">normal</span></p>
+<p class="c cm">&#160;&#160;// sisa_menit dibulatkan ke arah nol; nol atau negatif bila overdue</p>
+<p class="c">&#160;&#160;sisa_menit = trunc(remainingMs / 60000)</p>
+</div>
+<div style="display:flex; gap:32px; align-items:stretch">
+<div class="strip" style="width:1060px">
+<div class="seg-box bar-tl"><p class="chip tl">TERLAMBAT</p><p class="rsub">overdue: sisa 0 atau kurang (tepat 0 = overdue)</p></div>
+<div class="seg-box bar-seg"><p class="chip seg">SEGERA</p><p class="rsub">mendekati: lebih dari 0, kurang dari 24 jam</p></div>
+<div class="seg-box bar-bj"><p class="chip bj">BERJADWAL</p><p class="rsub">normal: 24 jam atau lebih (tepat 24 jam = normal)</p></div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:10px; justify-content:center">
+<p class="rsub"><span class="hl">Masukan:</span> <span class="id">task.deadline</span> (<span class="id">YYYY-MM-DDTHH:mm</span> atau dengan detik, WIB), <span class="id">now</span> (Date, bisa disuntikkan).</p>
+<p class="rsub"><span class="hl">Keluaran:</span> <span class="id">{kategori, sisa_menit}</span>.</p>
+</div>
+</div>
+<aside>Baca pseudocode categorizeTask. Masukan task.deadline dan now, keluaran kategori dan sisa_menit. Jelaskan offset tetap +07:00 sehingga zona waktu host server tidak berpengaruh. Garis di bawah: sisa 0 atau kurang berarti overdue, lebih dari 0 dan kurang dari 24 jam berarti mendekati, tepat 24 jam atau lebih berarti normal.</aside>
+</section>
+
+<section id="layer-b2" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">08</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer B — Backend (2 dari 2): endpoint</h2>
+<div class="code">
+<p class="c">GET /api/tasks:</p>
+<p class="c">&#160;&#160;now = new Date()</p>
+<p class="c">&#160;&#160;tasks = userTasks.map(add kategori, sisa_menit, mata_kuliah)</p>
+<p class="c">&#160;&#160;sort by group rank (<span class="k-seg">mendekati</span>=0, <span class="k-tl">overdue</span>=1, <span class="k-bj">normal</span>=2), lalu dalam grup:</p>
+<p class="c">&#160;&#160;&#160;&#160;&#160;<span class="k-seg">mendekati</span>: sisa_menit asc</p>
+<p class="c">&#160;&#160;&#160;&#160;&#160;<span class="k-tl">overdue</span>:&#160;&#160;&#160;sisa_menit desc&#160;&#160;&#160;<span class="cm">(paling baru lewat dulu)</span></p>
+<p class="c">&#160;&#160;&#160;&#160;&#160;<span class="k-bj">normal</span>:&#160;&#160;&#160;&#160;created_at desc</p>
+<p class="c">&#160;&#160;respond { tasks, server_time: now.toISOString() }</p>
+</div>
+<div style="display:flex; gap:32px; align-items:flex-start">
+<div class="rows" style="width:1000px">
+<div class="row-head">
+<p class="colh" style="width:90px">Grup</p>
+<p class="colh" style="width:230px">Status</p>
+<p class="colh" style="flex:1">Urutan dalam grup</p>
+</div>
+<div class="row">
+<p class="time" style="width:90px">0</p>
+<div style="width:230px; display:flex"><p class="chip seg">SEGERA</p></div>
+<p class="rtext" style="flex:1">mendekati: <span class="id">sisa_menit</span> asc</p>
+</div>
+<div class="row">
+<p class="time" style="width:90px">1</p>
+<div style="width:230px; display:flex"><p class="chip tl">TERLAMBAT</p></div>
+<p class="rtext" style="flex:1">overdue: <span class="id">sisa_menit</span> desc</p>
+</div>
+<div class="row">
+<p class="time" style="width:90px">2</p>
+<div style="width:230px; display:flex"><p class="chip bj">BERJADWAL</p></div>
+<p class="rtext" style="flex:1">normal: <span class="id">created_at</span> desc</p>
+</div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:18px; padding-top:52px">
+<p class="rsub"><span class="hl">Masukan:</span> token login (hanya tugas milik pengguna itu, F04).</p>
+<p class="rsub"><span class="hl">Keluaran:</span> <span class="id">{ tasks: [..., kategori, sisa_menit, mata_kuliah], server_time }</span>.</p>
+</div>
+</div>
+<aside>Endpoint GET /api/tasks. Urutan grup Mendekati, lalu Overdue, lalu Normal. Di dalam grup: mendekati berdasarkan sisa_menit naik, overdue berdasarkan sisa_menit turun sehingga yang paling baru lewat tampil dulu, normal berdasarkan created_at terbaru dulu. Hanya tugas milik pengguna yang login (F04). Respons juga membawa server_time.</aside>
+</section>
+
+<section id="layer-c" class="board" style="padding-bottom:44px; gap:16px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">09</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer C — Frontend</h2>
+<p class="rtext"><span class="id">TaskCard</span> membaca <span class="id">task.kategori</span> dari respons backend. Tiga screenshot aplikasi nyata:</p>
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; align-items:stretch">
+<div class="row" style="flex-direction:column; align-items:flex-start; gap:12px; padding:18px">
+<div style="display:flex; gap:14px; align-items:center"><p class="chip bj">BERJADWAL</p><p class="rtext">· normal</p></div>
+<img class="shot" src="../../../.impeccable/assets/v2-normal-crop.png" alt="Card tugas normal dari aplikasi StudyTrack: judul Tugas Besar: Graph Traversal, deadline 18 Nov 2026 16.28 WIB, hanya badge status Belum, tanpa teks sisa waktu" style="width:502px; height:237px">
+<p class="rname" style="font-size:40px">Tanpa penanda</p>
+<p class="rsub">Sisa 24 jam atau lebih: hanya badge status “Belum”, tanpa teks sisa waktu.</p>
+</div>
+<div class="row" style="flex-direction:column; align-items:flex-start; gap:12px; padding:18px">
+<div style="display:flex; gap:14px; align-items:center"><p class="chip seg">SEGERA</p><p class="rtext">· mendekati</p></div>
+<img class="shot" src="../../../.impeccable/assets/v2-mendekati-crop.png" alt="Card tugas mendekati dari aplikasi StudyTrack: judul Kuis 5: Normalisasi, badge Mendekati Deadline dan Belum, deadline 15 Nov 2026 18.33 WIB, teks Sisa 2 j 2 m" style="width:502px; height:269px">
+<p class="rname" style="font-size:40px">Sisa 2 j 2 m</p>
+<p class="rsub">Kurang dari 24 jam: tepi dan latar amber, badge “Mendekati Deadline”.</p>
+</div>
+<div class="row" style="flex-direction:column; align-items:flex-start; gap:12px; padding:18px">
+<div style="display:flex; gap:14px; align-items:center"><p class="chip tl">TERLAMBAT</p><p class="rtext">· overdue</p></div>
+<img class="shot" src="../../../.impeccable/assets/v2-overdue-crop.png" alt="Card tugas overdue dari aplikasi StudyTrack: judul Sprint 2: Backend API Integration, badge Terlambat dan Belum, deadline 06 Jul 2026 23.59 WIB, teks Terlambat 131 hr 16 j" style="width:502px; height:271px">
+<p class="rname" style="font-size:40px">Terlambat 131 hr 16 j</p>
+<p class="rsub">Waktu habis: tepi merah tebal, latar merah muda, badge merah “Terlambat”.</p>
+</div>
+</div>
+<p class="rtext"><span class="hl">Kondisi penentu tampilan:</span> <span class="id">task.kategori</span> dari backend. Refresh tiap 60 detik dan saat fokus; penanda selalu memuat teks.</p>
+<p class="note" style="font-size:26px">Sumber gambar: aplikasi nyata, diambil pada 15 Nov 2026 sekitar 16.30 WIB (terbaca dari kartu mendekati: deadline 18.33 WIB dengan “Sisa 2 j 2 m”). Gambar dipotong di sisi kanan: tombol “Tandai Selesai” dan “Hapus” tidak ditampilkan.</p>
+<aside>Tiga screenshot card nyata: normal, mendekati, overdue. Kondisi penentu tampilan adalah task.kategori dari backend. Penanda selalu bertulisan, tidak hanya warna. Refresh tiap 60 detik dan saat jendela mendapat fokus. Gambar diambil dari aplikasi yang berjalan, sekitar pukul 16.30 WIB pada 15 November 2026.</aside>
+</section>
+
+<section id="verif1" class="board" style="padding-bottom:64px; gap:20px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">10</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 3 · Verifikasi (1 dari 2)</h2>
+<div class="row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 24px">
+<p class="rsub">Data acuan: tabel contoh guidebook, <span class="id">now</span> tetap</p>
+<div style="display:flex; gap:56px; align-items:center">
+<div style="display:flex; gap:16px; align-items:center"><p class="rtext">tugas 1</p><p class="time" style="font-size:48px">07-03 23:59</p></div>
+<div style="display:flex; gap:16px; align-items:center"><p class="rtext">tugas 2</p><p class="time" style="font-size:48px">07-02 10:00</p></div>
+<div style="display:flex; gap:16px; align-items:center"><p class="rtext">tugas 3</p><p class="time" style="font-size:48px">07-06 23:59</p></div>
+</div>
+</div>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No.</th><th class="thc" style="width:28%">Kondisi / Input</th><th class="thc" style="width:53%">Hasil yang Diharapkan</th><th class="thc" style="width:14%">Jenis Skenario</th></tr>
+<tr><td>1</td><td><span class="id-ink">now = 2026-07-02 09:00</span> WIB; tugas 2 deadline <span class="id-ink">07-02 10:00</span></td><td>Tugas 2 <span class="id-ink">mendekati</span>, <span class="id-ink">sisa_menit = 60</span>, tampil paling atas (urutan id 2, 3, 1). Test: <span class="id-ink">seed at 2026-07-02T09:00+07:00</span></td><td>Positif</td></tr>
+<tr><td>2</td><td><span class="id-ink">now</span> sama; tugas 1 (<span class="id-ink">07-03 23:59</span>) dan tugas 3 (<span class="id-ink">07-06 23:59</span>)</td><td>Keduanya <span class="id-ink">normal</span>; tugas 1 <span class="id-ink">sisa_menit = 2339</span> (sekitar 39 jam), tugas 3 lebih jauh; urut <span class="id-ink">created_at</span> terbaru dulu. Test: sama dengan skenario 1</td><td>Positif</td></tr>
+<tr><td>3</td><td><span class="id-ink">now = 2026-07-04 00:00</span>; tugas 1 dan tugas 2</td><td>Keduanya <span class="id-ink">overdue</span> (tugas 1 <span class="id-ink">-1</span>, tugas 2 <span class="id-ink">-2280</span> menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati (dicek manual). Test: <span class="id-ink">seed at 2026-07-04T00:00+07:00</span></td><td>Negatif</td></tr>
+<tr><td>4</td><td>Tugas 2 dengan <span class="id-ink">status = selesai</span> dan <span class="id-ink">now = 2026-07-02 09:00</span></td><td>Tetap <span class="id-ink">mendekati</span> (status tidak mengubah kategori); card juga memuat badge status “Selesai” (dicek manual). Test: <span class="id-ink">selesai is still flagged</span></td><td>Edge Case</td></tr>
+</table>
+</div>
+<aside>Tiga jenis skenario: Positif, Negatif, Edge Case. Data acuan adalah tabel contoh guidebook dengan now tetap. Sebut angka nyata: 60 menit untuk tugas 2, 2339 menit untuk tugas 1, lalu -1 dan -2280 menit saat keduanya overdue. Status selesai tidak mengubah kategori. Tiap skenario punya nama test di kolom hasil.</aside>
+</section>
+
+<section id="verif2" class="board" style="padding-bottom:64px; gap:20px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">11</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 3 · Verifikasi (2 dari 2)</h2>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No.</th><th class="thc" style="width:28%">Kondisi / Input</th><th class="thc" style="width:53%">Hasil yang Diharapkan</th><th class="thc" style="width:14%">Jenis Skenario</th></tr>
+<tr><td>5</td><td><span class="id-ink">now = 2026-07-01 10:00</span>; tugas 2 (tepat 24 jam tersisa)</td><td><span class="id-ink">normal</span>, <span class="id-ink">sisa_menit = 1440</span> (harus kurang dari 24 jam secara ketat); satu menit kemudian <span class="id-ink">mendekati</span>, <span class="id-ink">1439</span>. Test: <span class="id-ink">exactly 24h is normal</span></td><td>Edge Case</td></tr>
+<tr><td>6</td><td><span class="id-ink">now = 2026-07-02 10:00</span>; tugas 2 (sisa tepat 0)</td><td><span class="id-ink">overdue</span>, <span class="id-ink">sisa_menit = 0</span>. Test: <span class="id-ink">exactly 0 is overdue</span></td><td>Edge Case</td></tr>
+<tr><td>7</td><td>Zona waktu host server diatur ke UTC</td><td>Hasil sama dengan host WIB (juga diuji dengan <span class="id-ink">America/Los_Angeles</span>). Test: <span class="id-ink">host timezone irrelevant</span></td><td>Edge Case</td></tr>
+<tr><td>8</td><td>Tugas dekat deadline milik pengguna lain</td><td>Tidak dikembalikan (F04: hanya tugas sendiri). Test: <span class="id-ink">only returns the logged-in user's own tasks</span> (<span class="id-ink">tasks.api.test.js</span>)</td><td>Negatif</td></tr>
+</table>
+</div>
+<div class="rows">
+<div class="row" style="gap:36px; padding:16px 24px">
+<p class="rsub" style="width:240px">Ringkasan jenis</p>
+<p class="rtext" style="flex:1"><span class="hl">Positif</span> 1, 2</p>
+<p class="rtext" style="flex:1"><span class="hl">Negatif</span> 3, 8</p>
+<p class="rtext" style="flex:1"><span class="hl">Edge Case</span> 4, 5, 6, 7</p>
+</div>
+</div>
+<p class="note">Skenario 1 sampai 7 diuji di <span class="id">backend/test/deadline.test.js</span>, skenario 8 di <span class="id">backend/test/tasks.api.test.js</span>; semuanya lulus dan angka <span class="id">sisa_menit</span> adalah nilai yang di-assert test. Bagian tampilan (penanda overdue pada skenario 3, badge Selesai pada skenario 4) dicek manual.</p>
+<aside>Batas yang dipaku test: tepat 24 jam (1440 menit) masih normal, satu menit kemudian 1439 menit menjadi mendekati. Tepat 0 adalah overdue. Host dengan zona UTC memberi hasil yang sama. Tugas milik pengguna lain tidak dikembalikan. Ringkasan: Positif 1 dan 2, Negatif 3 dan 8, Edge Case 4 sampai 7.</aside>
+</section>
+
+<section id="hasil" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">12</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 3 · Hasil pengujian</h2>
+<div class="rows">
+<div class="row-head">
+<p class="colh" style="width:620px">Perintah</p>
+<p class="colh" style="flex:1">Hasil</p>
+</div>
+<div class="row" style="gap:32px">
+<p class="c" style="width:620px">cd backend &amp;&amp; npm test</p>
+<p class="big" style="width:150px">70</p>
+<p class="rtext" style="flex:1">test lulus, 0 gagal, 0 dilewati (8 berkas)</p>
+</div>
+<div class="row" style="gap:32px">
+<p class="c" style="width:620px">cd frontend &amp;&amp; npm test</p>
+<p class="big" style="width:150px">4</p>
+<p class="rtext" style="flex:1">test lulus, 0 gagal (format sisa waktu)</p>
+</div>
+<div class="row" style="gap:32px; padding-top:26px; padding-bottom:26px">
+<p class="c" style="width:620px">npm --prefix frontend run build</p>
+<p class="rtext" style="flex:1">Build berhasil (Vite 8.1.0, 130 modul)</p>
+</div>
+</div>
+<div style="display:flex; flex-direction:column; gap:12px; margin-top:6px">
+<p class="colh">Rincian backend</p>
+<div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px">
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">deadline.test.js</p><p class="time" style="font-size:40px">16</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">advice.test.js</p><p class="time" style="font-size:40px">13</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">ai.api.test.js</p><p class="time" style="font-size:40px">7</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">llm.test.js</p><p class="time" style="font-size:40px">9</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">static.test.js</p><p class="time" style="font-size:40px">7</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">config.test.js</p><p class="time" style="font-size:40px">5</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">tasks.api.test.js</p><p class="time" style="font-size:40px">8</p></div>
+<div class="row" style="justify-content:space-between; padding:12px 20px"><p class="rsub">auth.middleware.test.js</p><p class="time" style="font-size:40px">5</p></div>
+</div>
+</div>
+<p class="note">Test AI memakai provider tiruan; tidak ada pemanggilan Gemini sungguhan di dalam test.</p>
+<aside>Hasil nyata: 70 test backend lulus di 8 berkas, 4 test frontend lulus, build frontend berhasil. Test AI memakai provider tiruan, jadi tidak ada pemanggilan Gemini sungguhan di dalam test.</aside>
+</section>
+
+<section id="ringkasan" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">13</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Ringkasan — konsistensi antar layer</h2>
+<div class="panel">
+<table class="tbl-md">
+<tr class="thr"><th class="thc" style="width:22%">Data (Database)</th><th class="thc" style="width:42%">Backend</th><th class="thc" style="width:36%">Frontend</th></tr>
+<tr><td><span class="id-ink">deadline</span></td><td><span class="id-ink">parseDeadlineWIB</span> (di kode: <span class="id-ink">parseWIB</span>) lalu <span class="id-ink">categorizeTask</span> menghasilkan <span class="id-ink">kategori</span>, <span class="id-ink">sisa_menit</span></td><td><span class="id-ink">task.kategori</span>, <span class="id-ink">task.sisa_menit</span> memilih penanda dan teks sisa waktu</td></tr>
+<tr><td><span class="id-ink">status</span></td><td>diabaikan oleh <span class="id-ink">categorizeTask</span>, diteruskan apa adanya</td><td>badge “Belum” / “Selesai” tetap tampil</td></tr>
+<tr><td><span class="id-ink">created_at</span></td><td>urutan kelompok <span class="id-ink">normal</span></td><td>tidak dihitung ulang di klien</td></tr>
+<tr><td><span class="id-ink">user_id</span></td><td>hanya tugas pengguna yang login (F04)</td><td>menampilkan apa yang diterima</td></tr>
+<tr><td><span class="id-ink">mata_kuliah_id</span></td><td>digabung menjadi <span class="id-ink">mata_kuliah</span></td><td>nama mata kuliah di card</td></tr>
+</table>
+</div>
+<p class="statement" style="font-size:52px; margin-top:20px">Backend menjadi satu-satunya tempat kategori dan urutan dihitung. Frontend hanya menampilkan.</p>
+<aside>Telusuri satu field dari Database ke Backend ke Frontend, misalnya deadline menjadi kategori lalu penanda card. Backend satu-satunya tempat kategori dan urutan dihitung; frontend hanya menampilkan.</aside>
+</section>
+
+<section id="bonus" class="board" style="padding-bottom:64px; gap:20px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">14</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Bonus — status apa adanya</h2>
+<div class="rows">
+<div class="row" style="align-items:flex-start; padding:16px 26px">
+<div style="width:400px; display:flex; flex-direction:column; gap:12px"><p class="rlabel">Kode nyata</p><p class="chip st">DIBANGUN</p></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<p class="rtext">Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 70 test backend dan 4 test frontend yang lulus. Repositori:</p>
+<p class="fill">[ISI: tautan repositori GitHub]</p>
+</div>
+</div>
+<div class="row" style="align-items:flex-start; padding:16px 26px">
+<div style="width:400px; display:flex; flex-direction:column; gap:12px"><p class="rlabel">AI/LLM</p><p class="chip st">DIBANGUN</p><p class="chip st">DIUJI UNIT (TIRUAN)</p></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<p class="rtext">Dibangun dan diuji unit dengan provider tiruan. <span class="id">POST /api/ai/prioritas</span> memakai rantai Gemini, lalu model open-source, lalu aturan. Fallback berbasis aturan sudah terverifikasi (slide 15). Pemanggilan Gemini sungguhan belum dicoba (menunggu kunci API).</p>
+<p class="fill">[ISI setelah uji kunci: sumber gemini terkonfirmasi]</p>
+</div>
+</div>
+<div class="row" style="align-items:flex-start; padding:16px 26px">
+<div style="width:400px; display:flex; flex-direction:column; gap:12px"><p class="rlabel">Deployment</p><p class="chip st">SIAP DEPLOY</p><p class="chip st-wait">BELUM ADA URL PUBLIK</p></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<p class="rtext">Blueprint Render (satu layanan, Express menyajikan build React) dan mode production sudah diuji lokal. Belum ada URL publik. Batasan: <span class="id">db.json</span> di free tier kembali ke seed saat redeploy atau restart.</p>
+<p class="fill">[ISI: URL publik Render setelah deploy]</p>
+</div>
+</div>
+<div class="row" style="align-items:flex-start; padding:16px 26px">
+<div style="width:400px; display:flex; flex-direction:column; gap:12px"><p class="rlabel">Git history rapi</p></div>
+<p class="rtext" style="flex:1">Branch fitur terpisah dari <span class="id">main</span>, satu commit baseline (<span class="id">5db4a7e</span>) lalu 14 commit deskriptif per langkah (<span class="id">feat</span>, <span class="id">fix</span>, <span class="id">style</span>, <span class="id">docs</span>).</p>
+</div>
+</div>
+<aside>Sebut singkat dan jujur: kode berjalan dan teruji; saran urutan belajar sudah dibangun dengan fallback aturan, tampilannya di slide 15; siap deploy ke Render; git history rapi. Ucapkan status AI dan deployment sesuai isi slide setelah penanda diisi. Jangan menyebut sudah live bila URL belum ada.</aside>
+</section>
+
+<section id="bonus-ai" class="board" style="padding-bottom:40px; gap:20px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">15</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Bonus AI — tampilan nyata</h2>
+<div style="display:flex; gap:40px; align-items:flex-start">
+<img class="shot" src="../screenshots-v2/advice.png" alt="Panel Saran urutan belajar dari aplikasi StudyTrack dengan tombol Minta saran prioritas, daftar tiga tugas (Kuis 5: Normalisasi, Sprint 2: Backend API Integration, Project 3: BSTMap Implementation), dan keterangan Saran otomatis (tanpa AI)" style="width:700px; height:765px">
+<div style="flex:1; display:flex; flex-direction:column; gap:20px">
+<p class="chip st">SUMBER: ATURAN</p>
+<p class="rtext">Keterangan “Saran otomatis (tanpa AI)” berarti sumbernya aturan bawaan, bukan keluaran model.</p>
+<div class="rows">
+<div class="row" style="padding:16px 22px"><p class="rsub">Tombol “Minta saran prioritas” memanggil <span class="id">POST /api/ai/prioritas</span></p></div>
+<div class="row" style="padding:16px 22px"><p class="rsub">Server memilih tugas mendekati dan terlambat milik pengguna yang login</p></div>
+<div class="row" style="padding:16px 22px"><p class="rsub">Satu panggilan per pengguna tiap 10 detik</p></div>
+<div class="row" style="padding:16px 22px"><p class="rsub">Kunci API hanya di environment variable</p></div>
+</div>
+<p class="note">Screenshot <span class="id">screenshots-v2/advice.png</span>: panel “Saran urutan belajar” dengan hasil saran.</p>
+</div>
+</div>
+<aside>Panel Saran urutan belajar. Tombol Minta saran prioritas memanggil POST /api/ai/prioritas; server memilih tugas mendekati dan terlambat milik pengguna yang login; satu panggilan per pengguna tiap 10 detik; kunci API hanya di environment variable. Keterangan Saran otomatis (tanpa AI) berarti sumbernya aturan bawaan, bukan keluaran model.</aside>
+</section>
+
+<section id="penutup" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">16</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Penutup</h2>
+<div class="rows">
+<div class="row" style="padding:22px 28px">
+<p class="rlabel" style="width:360px">Kategori</p>
+<p class="rtext" style="flex:1">Diturunkan di backend (tanpa ubah skema).</p>
+</div>
+<div class="row" style="padding:22px 28px">
+<p class="rlabel" style="width:360px">Urutan</p>
+<div style="flex:1; display:flex; gap:18px; align-items:center">
+<p class="chip seg">SEGERA</p><p class="rtext">Mendekati, lalu</p>
+<p class="chip tl">TERLAMBAT</p><p class="rtext">Overdue, lalu</p>
+<p class="chip bj">BERJADWAL</p><p class="rtext">Normal</p>
+</div>
+</div>
+<div class="row" style="padding:22px 28px">
+<p class="rlabel" style="width:360px">Penanda</p>
+<p class="rtext" style="flex:1">Berlabel teks, tidak hanya warna.</p>
+</div>
+<div class="row" style="padding:22px 28px">
+<p class="rlabel" style="width:360px">Verifikasi</p>
+<p class="rtext" style="flex:1">8 skenario (Positif, Negatif, Edge Case).</p>
+</div>
+</div>
+<div style="flex:1"></div>
+<h1 class="dot-stmt" style="font-size:136px">Terima kasih</h1>
+<aside>Ringkas tiga hal: kategori dihitung di backend tanpa mengubah skema; urutan Mendekati lalu Overdue lalu Normal dengan penanda berteks; dan 8 skenario verifikasi yang mencakup Positif, Negatif, dan Edge Case. Ucapkan terima kasih.</aside>
+</section>
+
+<script>
+  var n = parseInt(new URLSearchParams(location.search).get('s') || '0', 10);
+  if (n > 0) {
+    document.body.classList.add('one');
+    var s = document.querySelectorAll('body > section')[n - 1];
+    if (s) s.classList.add('on');
+  }
+</script>
+</body>
+</html>

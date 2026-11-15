@@ -1,0 +1,33 @@
+<section id="layer-a" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">06</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer A — Database</h2>
+<div style="display:flex; flex-direction:column; gap:4px; margin-top:8px">
+<p class="rlabel" style="font-size:46px">Keputusan:</p>
+<p class="dot-stmt" style="font-size:84px">Skema tidak berubah</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:16px">
+<p class="rtext" style="font-size:34px">Field tugas yang sudah ada, semuanya sudah cukup untuk fitur ini:</p>
+<div class="toks">
+<p class="tok">id</p><p class="tok">judul</p><p class="tok">deskripsi</p><p class="tok">deadline</p><p class="tok">status</p><p class="tok">mata_kuliah_id</p><p class="tok">created_at</p><p class="tok">user_id</p>
+</div>
+</div>
+<div class="rows" style="margin-top:10px">
+<div class="row" style="align-items:flex-start; padding:28px 30px">
+<p class="rlabel" style="width:320px; font-size:46px">Kenapa</p>
+<p class="rtext" style="flex:1; font-size:36px">Kolom <span class="id">kategori</span> yang disimpan akan salah seiring waktu berjalan dan butuh background job untuk memperbaikinya, jadi kategori <b>diturunkan</b> saat request.</p>
+</div>
+<div class="row" style="align-items:flex-start; padding:28px 30px">
+<p class="rlabel" style="width:320px; font-size:46px">DB sungguhan</p>
+<p class="rtext" style="flex:1; font-size:36px">Index <span class="id">(user_id, deadline)</span> membantu bila penyaringan dipindah ke SQL.</p>
+</div>
+<div class="row" style="align-items:flex-start; padding:28px 30px">
+<p class="rlabel" style="width:320px; font-size:46px">Zona waktu</p>
+<p class="rtext" style="flex:1; font-size:36px"><span class="id">deadline</span> disimpan sebagai waktu lokal tanpa zona dan diperlakukan sebagai WIB.</p>
+</div>
+</div>
+<aside>Skema tidak berubah. Alasannya: kategori yang disimpan akan basi seiring waktu dan butuh background job, jadi kategori diturunkan saat request. Index (user_id, deadline) hanya relevan untuk DB sungguhan. Deadline diperlakukan sebagai WIB.</aside>
+</section>

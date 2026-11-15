@@ -1,0 +1,27 @@
+<section id="verif2" class="board" style="padding-bottom:64px; gap:20px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">11</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 3 · Verifikasi (2 dari 2)</h2>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No.</th><th class="thc" style="width:28%">Kondisi / Input</th><th class="thc" style="width:53%">Hasil yang Diharapkan</th><th class="thc" style="width:14%">Jenis Skenario</th></tr>
+<tr><td>5</td><td><span class="id-ink">now = 2026-07-01 10:00</span>; tugas 2 (tepat 24 jam tersisa)</td><td><span class="id-ink">normal</span>, <span class="id-ink">sisa_menit = 1440</span> (harus kurang dari 24 jam secara ketat); satu menit kemudian <span class="id-ink">mendekati</span>, <span class="id-ink">1439</span>. Test: <span class="id-ink">exactly 24h is normal</span></td><td>Edge Case</td></tr>
+<tr><td>6</td><td><span class="id-ink">now = 2026-07-02 10:00</span>; tugas 2 (sisa tepat 0)</td><td><span class="id-ink">overdue</span>, <span class="id-ink">sisa_menit = 0</span>. Test: <span class="id-ink">exactly 0 is overdue</span></td><td>Edge Case</td></tr>
+<tr><td>7</td><td>Zona waktu host server diatur ke UTC</td><td>Hasil sama dengan host WIB (juga diuji dengan <span class="id-ink">America/Los_Angeles</span>). Test: <span class="id-ink">host timezone irrelevant</span></td><td>Edge Case</td></tr>
+<tr><td>8</td><td>Tugas dekat deadline milik pengguna lain</td><td>Tidak dikembalikan (F04: hanya tugas sendiri). Test: <span class="id-ink">only returns the logged-in user's own tasks</span> (<span class="id-ink">tasks.api.test.js</span>)</td><td>Negatif</td></tr>
+</table>
+</div>
+<div class="rows">
+<div class="row" style="gap:36px; padding:16px 24px">
+<p class="rsub" style="width:240px">Ringkasan jenis</p>
+<p class="rtext" style="flex:1"><span class="hl">Positif</span> 1, 2</p>
+<p class="rtext" style="flex:1"><span class="hl">Negatif</span> 3, 8</p>
+<p class="rtext" style="flex:1"><span class="hl">Edge Case</span> 4, 5, 6, 7</p>
+</div>
+</div>
+<p class="note">Skenario 1 sampai 7 diuji di <span class="id">backend/test/deadline.test.js</span>, skenario 8 di <span class="id">backend/test/tasks.api.test.js</span>; semuanya lulus dan angka <span class="id">sisa_menit</span> adalah nilai yang di-assert test. Bagian tampilan (penanda overdue pada skenario 3, badge Selesai pada skenario 4) dicek manual.</p>
+<aside>Batas yang dipaku test: tepat 24 jam (1440 menit) masih normal, satu menit kemudian 1439 menit menjadi mendekati. Tepat 0 adalah overdue. Host dengan zona UTC memberi hasil yang sama. Tugas milik pengguna lain tidak dikembalikan. Ringkasan: Positif 1 dan 2, Negatif 3 dan 8, Edge Case 4 sampai 7.</aside>
+</section>

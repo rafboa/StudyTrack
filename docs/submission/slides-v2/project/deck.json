@@ -1,0 +1,23 @@
+{
+  "v": 5,
+  "createdOnFiles": { "v": 1, "at": "2026-11-15T04:51:36Z" },
+  "lists": "css",
+  "format": { "v": 1, "shared": ["project/deck.css"] },
+  "title": "StudyTrack Reminder Deadline (Academya SE)",
+  "cover": "cover",
+  "order": ["cover", "p1", "p2", "p3a", "p3b", "layer-a", "layer-b1", "layer-b2", "layer-c", "verif1", "verif2", "hasil", "ringkasan", "bonus", "bonus-ai", "penutup"],
+  "sections": {
+    "pembuka": { "description": "Judul kasus: fitur Reminder Tugas Mendekati Deadline di StudyTrack.", "start": "cover" },
+    "tugas1": { "description": "Tugas 1: perubahan, pemetaan ke layer, dan tabel task 3P.", "start": "p1" },
+    "tugas2": { "description": "Tugas 2: rancangan teknis Layer A Database, Layer B Backend, Layer C Frontend.", "start": "layer-a" },
+    "tugas3": { "description": "Tugas 3: skenario verifikasi dan hasil pengujian nyata.", "start": "verif1" },
+    "penutup": { "description": "Ringkasan konsistensi, bonus dengan status jujur, dan penutup.", "start": "ringkasan" }
+  },
+  "faces": {
+    "barlow-condensed": { "family": "Barlow Condensed", "href": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap" },
+    "barlow-semi-condensed": { "family": "Barlow Semi Condensed", "href": "https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&display=swap" },
+    "doto": { "family": "Doto", "href": "https://fonts.googleapis.com/css2?family=Doto:wght@600..900&display=swap" },
+    "jetbrains-mono": { "family": "JetBrains Mono", "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..600&display=swap" }
+  },
+  "designSystems": []
+}

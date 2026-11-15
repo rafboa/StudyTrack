@@ -1,0 +1,20 @@
+<section id="ringkasan" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">13</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Ringkasan — konsistensi antar layer</h2>
+<div class="panel">
+<table class="tbl-md">
+<tr class="thr"><th class="thc" style="width:22%">Data (Database)</th><th class="thc" style="width:42%">Backend</th><th class="thc" style="width:36%">Frontend</th></tr>
+<tr><td><span class="id-ink">deadline</span></td><td><span class="id-ink">parseDeadlineWIB</span> (di kode: <span class="id-ink">parseWIB</span>) lalu <span class="id-ink">categorizeTask</span> menghasilkan <span class="id-ink">kategori</span>, <span class="id-ink">sisa_menit</span></td><td><span class="id-ink">task.kategori</span>, <span class="id-ink">task.sisa_menit</span> memilih penanda dan teks sisa waktu</td></tr>
+<tr><td><span class="id-ink">status</span></td><td>diabaikan oleh <span class="id-ink">categorizeTask</span>, diteruskan apa adanya</td><td>badge “Belum” / “Selesai” tetap tampil</td></tr>
+<tr><td><span class="id-ink">created_at</span></td><td>urutan kelompok <span class="id-ink">normal</span></td><td>tidak dihitung ulang di klien</td></tr>
+<tr><td><span class="id-ink">user_id</span></td><td>hanya tugas pengguna yang login (F04)</td><td>menampilkan apa yang diterima</td></tr>
+<tr><td><span class="id-ink">mata_kuliah_id</span></td><td>digabung menjadi <span class="id-ink">mata_kuliah</span></td><td>nama mata kuliah di card</td></tr>
+</table>
+</div>
+<p class="statement" style="font-size:52px; margin-top:20px">Backend menjadi satu-satunya tempat kategori dan urutan dihitung. Frontend hanya menampilkan.</p>
+<aside>Telusuri satu field dari Database ke Backend ke Frontend, misalnya deadline menjadi kategori lalu penanda card. Backend satu-satunya tempat kategori dan urutan dihitung; frontend hanya menampilkan.</aside>
+</section>

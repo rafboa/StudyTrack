@@ -1,0 +1,26 @@
+<section id="verif1" class="board" style="padding-bottom:64px; gap:20px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">10</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 3 · Verifikasi (1 dari 2)</h2>
+<div class="row" style="flex-direction:column; align-items:flex-start; gap:10px; padding:14px 24px">
+<p class="rsub">Data acuan: tabel contoh guidebook, <span class="id">now</span> tetap</p>
+<div style="display:flex; gap:56px; align-items:center">
+<div style="display:flex; gap:16px; align-items:center"><p class="rtext">tugas 1</p><p class="time" style="font-size:48px">07-03 23:59</p></div>
+<div style="display:flex; gap:16px; align-items:center"><p class="rtext">tugas 2</p><p class="time" style="font-size:48px">07-02 10:00</p></div>
+<div style="display:flex; gap:16px; align-items:center"><p class="rtext">tugas 3</p><p class="time" style="font-size:48px">07-06 23:59</p></div>
+</div>
+</div>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No.</th><th class="thc" style="width:28%">Kondisi / Input</th><th class="thc" style="width:53%">Hasil yang Diharapkan</th><th class="thc" style="width:14%">Jenis Skenario</th></tr>
+<tr><td>1</td><td><span class="id-ink">now = 2026-07-02 09:00</span> WIB; tugas 2 deadline <span class="id-ink">07-02 10:00</span></td><td>Tugas 2 <span class="id-ink">mendekati</span>, <span class="id-ink">sisa_menit = 60</span>, tampil paling atas (urutan id 2, 3, 1). Test: <span class="id-ink">seed at 2026-07-02T09:00+07:00</span></td><td>Positif</td></tr>
+<tr><td>2</td><td><span class="id-ink">now</span> sama; tugas 1 (<span class="id-ink">07-03 23:59</span>) dan tugas 3 (<span class="id-ink">07-06 23:59</span>)</td><td>Keduanya <span class="id-ink">normal</span>; tugas 1 <span class="id-ink">sisa_menit = 2339</span> (sekitar 39 jam), tugas 3 lebih jauh; urut <span class="id-ink">created_at</span> terbaru dulu. Test: sama dengan skenario 1</td><td>Positif</td></tr>
+<tr><td>3</td><td><span class="id-ink">now = 2026-07-04 00:00</span>; tugas 1 dan tugas 2</td><td>Keduanya <span class="id-ink">overdue</span> (tugas 1 <span class="id-ink">-1</span>, tugas 2 <span class="id-ink">-2280</span> menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati (dicek manual). Test: <span class="id-ink">seed at 2026-07-04T00:00+07:00</span></td><td>Negatif</td></tr>
+<tr><td>4</td><td>Tugas 2 dengan <span class="id-ink">status = selesai</span> dan <span class="id-ink">now = 2026-07-02 09:00</span></td><td>Tetap <span class="id-ink">mendekati</span> (status tidak mengubah kategori); card juga memuat badge status “Selesai” (dicek manual). Test: <span class="id-ink">selesai is still flagged</span></td><td>Edge Case</td></tr>
+</table>
+</div>
+<aside>Tiga jenis skenario: Positif, Negatif, Edge Case. Data acuan adalah tabel contoh guidebook dengan now tetap. Sebut angka nyata: 60 menit untuk tugas 2, 2339 menit untuk tugas 1, lalu -1 dan -2280 menit saat keduanya overdue. Status selesai tidak mengubah kategori. Tiap skenario punya nama test di kolom hasil.</aside>
+</section>

@@ -1,0 +1,47 @@
+<section id="layer-b2" class="board">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">08</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer B — Backend (2 dari 2): endpoint</h2>
+<div class="code">
+<p class="c">GET /api/tasks:</p>
+<p class="c">&#160;&#160;now = new Date()</p>
+<p class="c">&#160;&#160;tasks = userTasks.map(add kategori, sisa_menit, mata_kuliah)</p>
+<p class="c">&#160;&#160;sort by group rank (<span class="k-seg">mendekati</span>=0, <span class="k-tl">overdue</span>=1, <span class="k-bj">normal</span>=2), lalu dalam grup:</p>
+<p class="c">&#160;&#160;&#160;&#160;&#160;<span class="k-seg">mendekati</span>: sisa_menit asc</p>
+<p class="c">&#160;&#160;&#160;&#160;&#160;<span class="k-tl">overdue</span>:&#160;&#160;&#160;sisa_menit desc&#160;&#160;&#160;<span class="cm">(paling baru lewat dulu)</span></p>
+<p class="c">&#160;&#160;&#160;&#160;&#160;<span class="k-bj">normal</span>:&#160;&#160;&#160;&#160;created_at desc</p>
+<p class="c">&#160;&#160;respond { tasks, server_time: now.toISOString() }</p>
+</div>
+<div style="display:flex; gap:32px; align-items:flex-start">
+<div class="rows" style="width:1000px">
+<div class="row-head">
+<p class="colh" style="width:90px">Grup</p>
+<p class="colh" style="width:230px">Status</p>
+<p class="colh" style="flex:1">Urutan dalam grup</p>
+</div>
+<div class="row">
+<p class="time" style="width:90px">0</p>
+<div style="width:230px; display:flex"><p class="chip seg">SEGERA</p></div>
+<p class="rtext" style="flex:1">mendekati: <span class="id">sisa_menit</span> asc</p>
+</div>
+<div class="row">
+<p class="time" style="width:90px">1</p>
+<div style="width:230px; display:flex"><p class="chip tl">TERLAMBAT</p></div>
+<p class="rtext" style="flex:1">overdue: <span class="id">sisa_menit</span> desc</p>
+</div>
+<div class="row">
+<p class="time" style="width:90px">2</p>
+<div style="width:230px; display:flex"><p class="chip bj">BERJADWAL</p></div>
+<p class="rtext" style="flex:1">normal: <span class="id">created_at</span> desc</p>
+</div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:18px; padding-top:52px">
+<p class="rsub"><span class="hl">Masukan:</span> token login (hanya tugas milik pengguna itu, F04).</p>
+<p class="rsub"><span class="hl">Keluaran:</span> <span class="id">{ tasks: [..., kategori, sisa_menit, mata_kuliah], server_time }</span>.</p>
+</div>
+</div>
+<aside>Endpoint GET /api/tasks. Urutan grup Mendekati, lalu Overdue, lalu Normal. Di dalam grup: mendekati berdasarkan sisa_menit naik, overdue berdasarkan sisa_menit turun sehingga yang paling baru lewat tampil dulu, normal berdasarkan created_at terbaru dulu. Hanya tugas milik pengguna yang login (F04). Respons juga membawa server_time.</aside>
+</section>

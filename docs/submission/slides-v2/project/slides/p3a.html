@@ -1,0 +1,18 @@
+<section id="p3a" class="board" style="padding-bottom:72px; gap:22px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">04</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 1 · P3 — Tabel Task (1 dari 2)</h2>
+<div class="panel">
+<table class="tbl">
+<tr class="thr"><th class="thc" style="width:5%">No</th><th class="thc" style="width:34%">Deskripsi Task</th><th class="thc" style="width:10%">Layer</th><th class="thc" style="width:14%">Ketergantungan</th><th class="thc" style="width:37%">Catatan/Asumsi</th></tr>
+<tr><td>1</td><td>Dokumentasikan keputusan <u>tidak</u> mengubah skema tugas; opsional jelaskan index <span class="id-ink">(user_id, deadline)</span> untuk DB sungguhan</td><td>Database</td><td>-</td><td>Kategori yang disimpan akan basi seiring waktu, jadi dihitung per request. <span class="id-ink">deadline</span> adalah waktu lokal tanpa zona dan diperlakukan sebagai WIB.</td></tr>
+<tr><td>2</td><td>Tulis <span class="id-ink">parseDeadlineWIB(deadline)</span> yang mengubah <span class="id-ink">YYYY-MM-DDTHH:mm</span> menjadi instan absolut dengan offset tetap <span class="id-ink">+07:00</span></td><td>Backend</td><td>-</td><td>Zona waktu host server tidak boleh berpengaruh. Di kode: <span class="id-ink">parseWIB</span>.</td></tr>
+<tr><td>3</td><td>Tulis <span class="id-ink">categorizeTask(task, now)</span> yang mengembalikan <span class="id-ink">{kategori, sisa_menit}</span>: <span class="id-ink">mendekati</span> jika <span class="id-ink">0 &lt; sisa &lt; 24 jam</span>, <span class="id-ink">overdue</span> jika <span class="id-ink">sisa &lt;= 0</span>, selain itu <span class="id-ink">normal</span>; <span class="id-ink">status</span> diabaikan</td><td>Backend</td><td>2</td><td><span class="id-ink">now</span> bisa disuntikkan untuk tes. Tepat 24 jam adalah <span class="id-ink">normal</span>. Tepat 0 adalah <span class="id-ink">overdue</span> (waktu habis). Tugas selesai ikut ditandai (keputusan desain, mengikuti F01 secara harfiah).</td></tr>
+<tr><td>4</td><td>Ubah <span class="id-ink">GET /api/tasks</span>: tambahkan <span class="id-ink">kategori</span> dan <span class="id-ink">sisa_menit</span>; urutkan mendekati (terdekat dulu), overdue (yang baru lewat dulu), normal (<span class="id-ink">created_at</span> terbaru dulu); kembalikan <span class="id-ink">server_time</span></td><td>Backend</td><td>3</td><td>Memenuhi F02/F03/F04. Pengurutan di server agar sumber kebenaran tunggal.</td></tr>
+</table>
+</div>
+<aside>Jalankan task 1 sampai 4. Task 1 Database: tidak mengubah skema. Task 2: parseDeadlineWIB dengan offset tetap +07:00. Task 3: aturan 0 kurang dari sisa kurang dari 24 jam; tepat 24 jam normal, tepat 0 overdue, status diabaikan. Task 4: urutan dihitung di server. Sebut ketergantungan dan asumsi WIB.</aside>
+</section>

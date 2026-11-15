@@ -1,0 +1,35 @@
+<section id="layer-b1" class="board" style="padding-bottom:72px; gap:22px">
+<div class="topbar">
+<p class="brand">STUDYTRACK</p>
+<div class="spacer"></div>
+<div class="plat"><p class="plat-l">JALUR</p><p class="plat-n">07</p><p class="plat-l">/ 16</p></div>
+</div>
+<h2>Tugas 2 · Layer B — Backend (1 dari 2): fungsi kategori</h2>
+<div class="code">
+<p class="c">WIB_OFFSET = "+07:00"</p>
+<p class="c">parseDeadlineWIB(s)&#160;&#160;-&gt; Date&#160;&#160;&#160;<span class="cm">// di kode: parseWIB</span></p>
+<p class="c cm">&#160;&#160;// "YYYY-MM-DDTHH:mm" (tanpa detik): tambah ":00"; dengan detik: apa adanya</p>
+<p class="c cm">&#160;&#160;// lalu tempel WIB_OFFSET; format tidak dikenal -&gt; Invalid Date</p>
+<p class="c">&#160;</p>
+<p class="c">categorizeTask(task, now):</p>
+<p class="c cm">&#160;&#160;// status sengaja diabaikan: kategori hanya bergantung pada deadline</p>
+<p class="c">&#160;&#160;remainingMs = parseDeadlineWIB(task.deadline) - now</p>
+<p class="c">&#160;&#160;if remainingMs &lt;= 0:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span class="k-tl">overdue</span></p>
+<p class="c">&#160;&#160;else if remainingMs &lt; 24*3600*1000:&#160;&#160;&#160;<span class="k-seg">mendekati</span></p>
+<p class="c">&#160;&#160;else:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<span class="k-bj">normal</span></p>
+<p class="c cm">&#160;&#160;// sisa_menit dibulatkan ke arah nol; nol atau negatif bila overdue</p>
+<p class="c">&#160;&#160;sisa_menit = trunc(remainingMs / 60000)</p>
+</div>
+<div style="display:flex; gap:32px; align-items:stretch">
+<div class="strip" style="width:1060px">
+<div class="seg-box bar-tl"><p class="chip tl">TERLAMBAT</p><p class="rsub">overdue: sisa 0 atau kurang (tepat 0 = overdue)</p></div>
+<div class="seg-box bar-seg"><p class="chip seg">SEGERA</p><p class="rsub">mendekati: lebih dari 0, kurang dari 24 jam</p></div>
+<div class="seg-box bar-bj"><p class="chip bj">BERJADWAL</p><p class="rsub">normal: 24 jam atau lebih (tepat 24 jam = normal)</p></div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:10px; justify-content:center">
+<p class="rsub"><span class="hl">Masukan:</span> <span class="id">task.deadline</span> (<span class="id">YYYY-MM-DDTHH:mm</span> atau dengan detik, WIB), <span class="id">now</span> (Date, bisa disuntikkan).</p>
+<p class="rsub"><span class="hl">Keluaran:</span> <span class="id">{kategori, sisa_menit}</span>.</p>
+</div>
+</div>
+<aside>Baca pseudocode categorizeTask. Masukan task.deadline dan now, keluaran kategori dan sisa_menit. Jelaskan offset tetap +07:00 sehingga zona waktu host server tidak berpengaruh. Garis di bawah: sisa 0 atau kurang berarti overdue, lebih dari 0 dan kurang dari 24 jam berarti mendekati, tepat 24 jam atau lebih berarti normal.</aside>
+</section>
