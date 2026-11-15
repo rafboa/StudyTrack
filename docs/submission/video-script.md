@@ -49,7 +49,7 @@ Buka `StudyTrack-Deck.pdf` layar penuh dan jalankan sesuai urutan di bawah. Wakt
 | 3:55-5:30 | 7 dan 8. Layer B Backend | Baca pseudocode `categorizeTask` (masukan `task.deadline` dan `now`, keluaran `{kategori, sisa_menit}`). Lalu `GET /api/tasks`: urutan Mendekati, Overdue, Normal, dan aturan urut dalam tiap grup. Jelaskan offset tetap `+07:00`. |
 | 5:30-6:30 | 9. Layer C Frontend | Tiga screenshot card nyata (normal, mendekati, overdue). Kondisi penentu: `task.kategori` dari backend. Penanda selalu bertulisan, tidak hanya warna. Refresh tiap 60 detik dan saat fokus. Sebut bahwa gambar diambil dari aplikasi yang berjalan. |
 | 6:30-7:55 | 10 dan 11. Verifikasi | Tunjuk tiga jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4 sampai 7). Sebut angka nyata: 60 menit, 2339 menit, -1 dan -2280, batas 1440 menjadi normal dan 1439 mendekati, tepat 0 overdue, status selesai, host UTC. Tiap skenario punya test bernama di kolom hasil. |
-| 7:55-8:20 | 12. Hasil pengujian | Sebut hasil nyata: 57 test backend dan 4 test frontend lulus, build berhasil. Test AI memakai provider tiruan. |
+| 7:55-8:20 | 12. Hasil pengujian | Sebut hasil nyata: 70 test backend dan 4 test frontend lulus, build berhasil. Test AI memakai provider tiruan. |
 | 8:20-8:45 | 13. Ringkasan konsistensi | Telusuri satu field dari DB ke Backend ke Frontend, misalnya `deadline` ke `kategori` ke penanda card. Backend satu-satunya tempat kategori dihitung. |
 | 8:45-9:25 | 14 dan 15. Bonus | Sebut singkat dan jujur: kode berjalan dan teruji, saran urutan belajar sudah dibangun dengan fallback aturan (tampilan di slide 15), siap deploy ke Render, git history rapi. Ucapkan status AI dan deployment sesuai isi slide setelah Anda mengisinya (jangan menyebut sudah live bila URL belum ada). |
 

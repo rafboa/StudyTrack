@@ -42,8 +42,8 @@ Tabel ini hanya alat bantu (sesuai guidebook). Baris yang terdampak menjadi task
 | No | Deskripsi Task | Layer | Ketergantungan | Catatan/Asumsi |
 |---|---|---|---|---|
 | 1 | Dokumentasikan keputusan **tidak** mengubah skema tugas; opsional jelaskan index `(user_id, deadline)` untuk DB sungguhan | Database | - | Kategori yang disimpan akan basi seiring waktu, jadi dihitung per request. `deadline` adalah waktu lokal tanpa zona dan diperlakukan sebagai WIB. |
-| 2 | Tulis `parseDeadlineWIB(deadline)` yang mengubah `YYYY-MM-DDTHH:mm` menjadi instan absolut dengan offset tetap `+07:00` | Backend | - | Zona waktu host server tidak boleh berpengaruh. |
-| 3 | Tulis `categorizeTask(task, now)` yang mengembalikan `{kategori, sisa_menit}`: `mendekati` jika `0 < sisa < 24 jam`, `overdue` jika `sisa <= 0`, selain itu `normal`; `status` diabaikan | Backend | 2 | `now` bisa disuntikkan untuk tes. Tepat 24 jam adalah `normal`. Tepat 0 adalah `overdue` (waktu habis). Tugas selesai ikut ditandai (keputusan pengguna, mengikuti F01 secara harfiah). |
+| 2 | Tulis `parseDeadlineWIB(deadline)` yang mengubah `YYYY-MM-DDTHH:mm` menjadi instan absolut dengan offset tetap `+07:00` | Backend | - | Zona waktu host server tidak boleh berpengaruh. Di kode: `parseWIB`. |
+| 3 | Tulis `categorizeTask(task, now)` yang mengembalikan `{kategori, sisa_menit}`: `mendekati` jika `0 < sisa < 24 jam`, `overdue` jika `sisa <= 0`, selain itu `normal`; `status` diabaikan | Backend | 2 | `now` bisa disuntikkan untuk tes. Tepat 24 jam adalah `normal`. Tepat 0 adalah `overdue` (waktu habis). Tugas selesai ikut ditandai (keputusan desain, mengikuti F01 secara harfiah). |
 | 4 | Ubah `GET /api/tasks`: tambahkan `kategori` dan `sisa_menit`; urutkan mendekati (terdekat dulu), overdue (yang baru lewat dulu), normal (`created_at` terbaru dulu); kembalikan `server_time` | Backend | 3 | Memenuhi F02/F03/F04. Pengurutan di server agar sumber kebenaran tunggal. |
 
 ## Slide 5. Tugas 1, P3: Tabel Task (2 dari 2)
@@ -74,7 +74,9 @@ Ketiga layer terwakili: Database (task 1), Backend (task 2, 3, 4, 7, 8), Fronten
 
 ```
 WIB_OFFSET = "+07:00"
-parseDeadlineWIB(s)  -> Date   // new Date(s + ":00" + WIB_OFFSET)
+parseDeadlineWIB(s)  -> Date   // di kode: parseWIB
+  // "YYYY-MM-DDTHH:mm" (tanpa detik): tambah ":00"; dengan detik: apa adanya
+  // lalu tempel WIB_OFFSET; format tidak dikenal -> Invalid Date
 
 categorizeTask(task, now):
   // status sengaja diabaikan: kategori hanya bergantung pada deadline
@@ -86,7 +88,7 @@ categorizeTask(task, now):
   sisa_menit = trunc(remainingMs / 60000)
 ```
 
-Masukan: `task.deadline` (`YYYY-MM-DDTHH:mm`, WIB), `now` (Date, bisa disuntikkan).
+Masukan: `task.deadline` (`YYYY-MM-DDTHH:mm` atau dengan detik, WIB), `now` (Date, bisa disuntikkan).
 Keluaran: `{kategori, sisa_menit}`.
 
 ---
@@ -125,14 +127,14 @@ Sumber gambar: aplikasi nyata pada 15 Nov 2026 sekitar 02.14 WIB (`now` = jam se
 
 ## Slide 10. Tugas 3, Verifikasi (1 dari 2)
 
-Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), `now` tetap. Semua test ada di `backend/test/deadline.test.js` dan lulus; angka `sisa_menit` adalah nilai yang di-assert test.
+Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), `now` tetap. Skenario 1 sampai 7 diuji di `backend/test/deadline.test.js`, skenario 8 di `backend/test/tasks.api.test.js`; semuanya lulus dan angka `sisa_menit` adalah nilai yang di-assert test. Bagian tampilan (penanda overdue pada skenario 3, badge Selesai pada skenario 4) dicek manual.
 
 | No. | Kondisi / Input | Hasil yang Diharapkan | Jenis Skenario |
 |---|---|---|---|
 | 1 | `now = 2026-07-02 09:00` WIB; tugas 2 deadline `07-02 10:00` | Tugas 2 `mendekati`, `sisa_menit = 60`, tampil paling atas (urutan id 2, 3, 1). Test: `seed at 2026-07-02T09:00+07:00` | Positif |
 | 2 | `now` sama; tugas 1 (`07-03 23:59`) dan tugas 3 (`07-06 23:59`) | Keduanya `normal`; tugas 1 `sisa_menit = 2339` (sekitar 39 jam), tugas 3 lebih jauh; urut `created_at` terbaru dulu. Test: sama dengan skenario 1 | Positif |
-| 3 | `now = 2026-07-04 00:00`; tugas 1 dan tugas 2 | Keduanya `overdue` (tugas 1 `-1`, tugas 2 `-2280` menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati. Test: `seed at 2026-07-04T00:00+07:00` | Negatif |
-| 4 | Tugas 2 dengan `status = selesai` dan `now = 2026-07-02 09:00` | Tetap `mendekati` (status tidak mengubah kategori); card juga memuat badge status "Selesai". Test: `selesai is still flagged` | Edge Case |
+| 3 | `now = 2026-07-04 00:00`; tugas 1 dan tugas 2 | Keduanya `overdue` (tugas 1 `-1`, tugas 2 `-2280` menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati (dicek manual). Test: `seed at 2026-07-04T00:00+07:00` | Negatif |
+| 4 | Tugas 2 dengan `status = selesai` dan `now = 2026-07-02 09:00` | Tetap `mendekati` (status tidak mengubah kategori); card juga memuat badge status "Selesai" (dicek manual). Test: `selesai is still flagged` | Edge Case |
 
 ## Slide 11. Tugas 3, Verifikasi (2 dari 2)
 
@@ -151,11 +153,11 @@ Ringkasan jenis: Positif (1, 2), Negatif (3, 8), Edge Case (4, 5, 6, 7). Skenari
 
 | Perintah | Hasil |
 |---|---|
-| `cd backend && npm test` | 57 test lulus, 0 gagal, 0 dilewati (7 berkas) |
+| `cd backend && npm test` | 70 test lulus, 0 gagal, 0 dilewati (8 berkas) |
 | `cd frontend && npm test` | 4 test lulus, 0 gagal (format sisa waktu) |
 | `npm --prefix frontend run build` | Build berhasil (Vite 8.1.0, 80 modul) |
 
-Rincian backend: `deadline.test.js` 16, `advice.test.js` 10, `ai.api.test.js` 6, `llm.test.js` 9, `static.test.js` 7, `config.test.js` 5, `tasks.api.test.js` 4. Test AI memakai provider tiruan; tidak ada pemanggilan Gemini sungguhan di dalam test.
+Rincian backend: `deadline.test.js` 16, `advice.test.js` 13, `ai.api.test.js` 7, `llm.test.js` 9, `static.test.js` 7, `config.test.js` 5, `tasks.api.test.js` 8, `auth.middleware.test.js` 5. Test AI memakai provider tiruan; tidak ada pemanggilan Gemini sungguhan di dalam test.
 
 ---
 
@@ -163,7 +165,7 @@ Rincian backend: `deadline.test.js` 16, `advice.test.js` 10, `ai.api.test.js` 6,
 
 | Data (Database) | Backend | Frontend |
 |---|---|---|
-| `deadline` | `parseDeadlineWIB` lalu `categorizeTask` menghasilkan `kategori`, `sisa_menit` | `task.kategori`, `task.sisa_menit` memilih penanda dan teks sisa waktu |
+| `deadline` | `parseDeadlineWIB` (di kode: `parseWIB`) lalu `categorizeTask` menghasilkan `kategori`, `sisa_menit` | `task.kategori`, `task.sisa_menit` memilih penanda dan teks sisa waktu |
 | `status` | diabaikan oleh `categorizeTask`, diteruskan apa adanya | badge "Belum" / "Selesai" tetap tampil |
 | `created_at` | urutan kelompok `normal` | tidak dihitung ulang di klien |
 | `user_id` | hanya tugas pengguna yang login (F04) | menampilkan apa yang diterima |
@@ -175,10 +177,10 @@ Backend menjadi satu-satunya tempat kategori dan urutan dihitung. Frontend hanya
 
 ## Slide 14. Bonus
 
-- **Kode nyata:** dibangun. Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 57 test backend dan 4 test frontend yang lulus. Repositori: `[ISI: tautan repositori GitHub]`
+- **Kode nyata:** dibangun. Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 70 test backend dan 4 test frontend yang lulus. Repositori: `[ISI: tautan repositori GitHub]`
 - **AI/LLM:** dibangun dan diuji unit dengan provider tiruan. `POST /api/ai/prioritas` memakai rantai Gemini, lalu model open-source, lalu aturan. Fallback berbasis aturan sudah terverifikasi (slide 15). Pemanggilan Gemini sungguhan belum dicoba (menunggu kunci API). `[ISI setelah uji kunci: sumber gemini terkonfirmasi]`
 - **Deployment:** siap deploy. Blueprint Render (satu layanan, Express menyajikan build React) dan mode production sudah diuji lokal. Belum ada URL publik. `[ISI: URL publik Render setelah deploy]` Batasan: `db.json` di free tier kembali ke seed saat redeploy atau restart.
-- **Git history rapi:** branch fitur terpisah dari `main`, satu commit baseline (`5db4a7e`) lalu 12 commit deskriptif per langkah (`feat`, `fix`, `style`, `docs`).
+- **Git history rapi:** branch fitur terpisah dari `main`, satu commit baseline (`5db4a7e`) lalu 14 commit deskriptif per langkah (`feat`, `fix`, `style`, `docs`).
 
 ---
 

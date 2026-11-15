@@ -111,8 +111,8 @@
     <thead><tr><th>No</th><th>Deskripsi Task</th><th>Layer</th><th>Ketergantungan</th><th>Catatan/Asumsi</th></tr></thead>
     <tbody>
       <tr><td>1</td><td>Dokumentasikan keputusan <b>tidak</b> mengubah skema tugas; opsional jelaskan index <code>(user_id, deadline)</code> untuk DB sungguhan</td><td>Database</td><td>-</td><td>Kategori yang disimpan akan basi seiring waktu, jadi dihitung per request. <code>deadline</code> adalah waktu lokal tanpa zona dan diperlakukan sebagai WIB.</td></tr>
-      <tr><td>2</td><td>Tulis <code>parseDeadlineWIB(deadline)</code> yang mengubah <code>YYYY-MM-DDTHH:mm</code> menjadi instan absolut dengan offset tetap <code>+07:00</code></td><td>Backend</td><td>-</td><td>Zona waktu host server tidak boleh berpengaruh.</td></tr>
-      <tr><td>3</td><td>Tulis <code>categorizeTask(task, now)</code> yang mengembalikan <code>{kategori, sisa_menit}</code>: <code>mendekati</code> jika <code>0 &lt; sisa &lt; 24 jam</code>, <code>overdue</code> jika <code>sisa &lt;= 0</code>, selain itu <code>normal</code>; <code>status</code> diabaikan</td><td>Backend</td><td>2</td><td><code>now</code> bisa disuntikkan untuk tes. Tepat 24 jam adalah <code>normal</code>. Tepat 0 adalah <code>overdue</code> (waktu habis). Tugas selesai ikut ditandai (keputusan pengguna, mengikuti F01 secara harfiah).</td></tr>
+      <tr><td>2</td><td>Tulis <code>parseDeadlineWIB(deadline)</code> yang mengubah <code>YYYY-MM-DDTHH:mm</code> menjadi instan absolut dengan offset tetap <code>+07:00</code></td><td>Backend</td><td>-</td><td>Zona waktu host server tidak boleh berpengaruh. Di kode: <code>parseWIB</code>.</td></tr>
+      <tr><td>3</td><td>Tulis <code>categorizeTask(task, now)</code> yang mengembalikan <code>{kategori, sisa_menit}</code>: <code>mendekati</code> jika <code>0 &lt; sisa &lt; 24 jam</code>, <code>overdue</code> jika <code>sisa &lt;= 0</code>, selain itu <code>normal</code>; <code>status</code> diabaikan</td><td>Backend</td><td>2</td><td><code>now</code> bisa disuntikkan untuk tes. Tepat 24 jam adalah <code>normal</code>. Tepat 0 adalah <code>overdue</code> (waktu habis). Tugas selesai ikut ditandai (keputusan desain, mengikuti F01 secara harfiah).</td></tr>
       <tr><td>4</td><td>Ubah <code>GET /api/tasks</code>: tambahkan <code>kategori</code> dan <code>sisa_menit</code>; urutkan mendekati (terdekat dulu), overdue (yang baru lewat dulu), normal (<code>created_at</code> terbaru dulu); kembalikan <code>server_time</code></td><td>Backend</td><td>3</td><td>Memenuhi F02/F03/F04. Pengurutan di server agar sumber kebenaran tunggal.</td></tr>
     </tbody>
   </table>
@@ -152,7 +152,9 @@
   <p class="tag">Tugas 2 | Rancangan Teknis</p>
   <h2>Layer B, Backend (1 dari 2): fungsi kategori</h2>
 <pre>WIB_OFFSET = "+07:00"
-parseDeadlineWIB(s)  -&gt; Date   // new Date(s + ":00" + WIB_OFFSET)
+parseDeadlineWIB(s)  -&gt; Date   // di kode: parseWIB
+  // "YYYY-MM-DDTHH:mm" (tanpa detik): tambah ":00"; dengan detik: apa adanya
+  // lalu tempel WIB_OFFSET; format tidak dikenal -&gt; Invalid Date
 
 categorizeTask(task, now):
   // status sengaja diabaikan: kategori hanya bergantung pada deadline
@@ -162,7 +164,7 @@ categorizeTask(task, now):
   else:                                 normal
   // sisa_menit dibulatkan ke arah nol; nol atau negatif bila overdue
   sisa_menit = trunc(remainingMs / 60000)</pre>
-  <p><b>Masukan:</b> <code>task.deadline</code> (<code>YYYY-MM-DDTHH:mm</code>, WIB), <code>now</code> (Date, bisa disuntikkan).</p>
+  <p><b>Masukan:</b> <code>task.deadline</code> (<code>YYYY-MM-DDTHH:mm</code> atau dengan detik, WIB), <code>now</code> (Date, bisa disuntikkan).</p>
   <p><b>Keluaran:</b> <code>{kategori, sisa_menit}</code>.</p>
 </section>
 
@@ -214,11 +216,11 @@ categorizeTask(task, now):
     <tbody>
       <tr><td>1</td><td><code>now = 2026-07-02 09:00</code> WIB; tugas 2 deadline <code>07-02 10:00</code></td><td>Tugas 2 <code>mendekati</code>, <code>sisa_menit = 60</code>, tampil paling atas (urutan id 2, 3, 1). Test: <code>seed at 2026-07-02T09:00+07:00</code></td><td class="t-pos">Positif</td></tr>
       <tr><td>2</td><td><code>now</code> sama; tugas 1 (<code>07-03 23:59</code>) dan tugas 3 (<code>07-06 23:59</code>)</td><td>Keduanya <code>normal</code>; tugas 1 <code>sisa_menit = 2339</code> (sekitar 39 jam), tugas 3 lebih jauh; urut <code>created_at</code> terbaru dulu. Test: sama dengan skenario 1</td><td class="t-pos">Positif</td></tr>
-      <tr><td>3</td><td><code>now = 2026-07-04 00:00</code>; tugas 1 dan tugas 2</td><td>Keduanya <code>overdue</code> (tugas 1 <code>-1</code>, tugas 2 <code>-2280</code> menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati. Test: <code>seed at 2026-07-04T00:00+07:00</code></td><td class="t-neg">Negatif</td></tr>
-      <tr><td>4</td><td>Tugas 2 dengan <code>status = selesai</code> dan <code>now = 2026-07-02 09:00</code></td><td>Tetap <code>mendekati</code> (status tidak mengubah kategori); card juga memuat badge status "Selesai". Test: <code>selesai is still flagged</code></td><td class="t-edge">Edge Case</td></tr>
+      <tr><td>3</td><td><code>now = 2026-07-04 00:00</code>; tugas 1 dan tugas 2</td><td>Keduanya <code>overdue</code> (tugas 1 <code>-1</code>, tugas 2 <code>-2280</code> menit), tetap tampil (urutan 1, 2, 3), penanda overdue bukan mendekati (dicek manual). Test: <code>seed at 2026-07-04T00:00+07:00</code></td><td class="t-neg">Negatif</td></tr>
+      <tr><td>4</td><td>Tugas 2 dengan <code>status = selesai</code> dan <code>now = 2026-07-02 09:00</code></td><td>Tetap <code>mendekati</code> (status tidak mengubah kategori); card juga memuat badge status "Selesai" (dicek manual). Test: <code>selesai is still flagged</code></td><td class="t-edge">Edge Case</td></tr>
     </tbody>
   </table>
-  <p class="note">Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), <code>now</code> tetap. Semua test ada di <code>backend/test/deadline.test.js</code> dan lulus.</p>
+  <p class="note">Data acuan: tabel contoh guidebook (tugas 1: 07-03 23:59, tugas 2: 07-02 10:00, tugas 3: 07-06 23:59), <code>now</code> tetap. Skenario 1 sampai 7 diuji di <code>backend/test/deadline.test.js</code>, skenario 8 di <code>backend/test/tasks.api.test.js</code>; semuanya lulus. Bagian tampilan (penanda overdue pada skenario 3, badge Selesai pada skenario 4) dicek manual.</p>
 </section>
 
 <!-- 11. Verifikasi (2/2) -->
@@ -246,12 +248,12 @@ categorizeTask(task, now):
     <colgroup><col style="width:40%"><col style="width:60%"></colgroup>
     <thead><tr><th>Perintah</th><th>Hasil</th></tr></thead>
     <tbody>
-      <tr><td><code>cd backend &amp;&amp; npm test</code></td><td><b>57 test lulus</b>, 0 gagal, 0 dilewati (7 berkas)</td></tr>
+      <tr><td><code>cd backend &amp;&amp; npm test</code></td><td><b>70 test lulus</b>, 0 gagal, 0 dilewati (8 berkas)</td></tr>
       <tr><td><code>cd frontend &amp;&amp; npm test</code></td><td><b>4 test lulus</b>, 0 gagal (format sisa waktu)</td></tr>
       <tr><td><code>npm --prefix frontend run build</code></td><td><b>Build berhasil</b> (Vite 8.1.0, 80 modul)</td></tr>
     </tbody>
   </table>
-  <p class="note" style="margin-top:14px">Rincian backend: <code>deadline.test.js</code> 16 (kategori, urutan, WIB, zona host), <code>advice.test.js</code> 10 dan <code>ai.api.test.js</code> 6 (saran AI), <code>llm.test.js</code> 9 (provider), <code>static.test.js</code> 7 (frontend dari Express), <code>config.test.js</code> 5 (konfigurasi production), <code>tasks.api.test.js</code> 4 (endpoint tugas).</p>
+  <p class="note" style="margin-top:14px">Rincian backend: <code>deadline.test.js</code> 16 (kategori, urutan, WIB, zona host), <code>advice.test.js</code> 13 dan <code>ai.api.test.js</code> 7 (saran AI dan log kegagalan), <code>llm.test.js</code> 9 (provider), <code>static.test.js</code> 7 (frontend dari Express), <code>config.test.js</code> 5 (konfigurasi production), <code>tasks.api.test.js</code> 8 (endpoint tugas, validasi deadline), <code>auth.middleware.test.js</code> 5 (token pengguna yang sudah tidak ada).</p>
   <p class="note">Test AI memakai provider tiruan, jadi tidak ada pemanggilan Gemini sungguhan di dalam test. Skenario verifikasi 1 sampai 8 memetakan ke test yang lulus di atas.</p>
 </section>
 
@@ -263,7 +265,7 @@ categorizeTask(task, now):
     <colgroup><col style="width:20%"><col style="width:42%"><col style="width:38%"></colgroup>
     <thead><tr><th>Data (Database)</th><th>Backend</th><th>Frontend</th></tr></thead>
     <tbody>
-      <tr><td><code>deadline</code></td><td><code>parseDeadlineWIB</code> lalu <code>categorizeTask</code> menghasilkan <code>kategori</code>, <code>sisa_menit</code></td><td><code>task.kategori</code>, <code>task.sisa_menit</code> memilih penanda dan teks sisa waktu</td></tr>
+      <tr><td><code>deadline</code></td><td><code>parseDeadlineWIB</code> (di kode: <code>parseWIB</code>) lalu <code>categorizeTask</code> menghasilkan <code>kategori</code>, <code>sisa_menit</code></td><td><code>task.kategori</code>, <code>task.sisa_menit</code> memilih penanda dan teks sisa waktu</td></tr>
       <tr><td><code>status</code></td><td>diabaikan oleh <code>categorizeTask</code>, diteruskan apa adanya</td><td>badge "Belum" / "Selesai" tetap tampil</td></tr>
       <tr><td><code>created_at</code></td><td>urutan kelompok <code>normal</code></td><td>tidak dihitung ulang di klien</td></tr>
       <tr><td><code>user_id</code></td><td>hanya tugas pengguna yang login (F04)</td><td>menampilkan apa yang diterima</td></tr>
@@ -278,10 +280,10 @@ categorizeTask(task, now):
   <p class="tag">Bonus</p>
   <h2>Nilai tambah</h2>
   <ul>
-    <li style="font-size:22px"><b>Kode nyata:</b> dibangun. Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 57 test backend dan 4 test frontend yang lulus. Repositori: <span class="ph">[ISI: tautan repositori GitHub]</span></li>
+    <li style="font-size:22px"><b>Kode nyata:</b> dibangun. Rancangan Tugas 2 direalisasikan di starter kit (backend Express, frontend React), dengan 70 test backend dan 4 test frontend yang lulus. Repositori: <span class="ph">[ISI: tautan repositori GitHub]</span></li>
     <li style="font-size:22px"><b>AI/LLM:</b> dibangun dan diuji unit dengan provider tiruan. <code>POST /api/ai/prioritas</code> memakai rantai Gemini, lalu model open-source, lalu aturan. Fallback berbasis aturan sudah terverifikasi (slide 15). Pemanggilan Gemini sungguhan belum dicoba (menunggu kunci API). <span class="ph">[ISI setelah uji kunci: sumber gemini terkonfirmasi]</span></li>
     <li style="font-size:22px"><b>Deployment:</b> siap deploy. Blueprint Render (satu layanan, Express menyajikan build React) dan mode production sudah diuji lokal. Belum ada URL publik. <span class="ph">[ISI: URL publik Render setelah deploy]</span> Batasan: <code>db.json</code> di free tier kembali ke seed saat redeploy atau restart.</li>
-    <li style="font-size:22px"><b>Git history rapi:</b> branch fitur terpisah dari <code>main</code>, satu commit baseline (<code>5db4a7e</code>) lalu 12 commit deskriptif per langkah (<code>feat</code>, <code>fix</code>, <code>style</code>, <code>docs</code>).</li>
+    <li style="font-size:22px"><b>Git history rapi:</b> branch fitur terpisah dari <code>main</code>, satu commit baseline (<code>5db4a7e</code>) lalu 14 commit deskriptif per langkah (<code>feat</code>, <code>fix</code>, <code>style</code>, <code>docs</code>).</li>
   </ul>
 </section>
 

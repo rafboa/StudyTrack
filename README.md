@@ -81,7 +81,7 @@ cd frontend
 npm test
 ```
 
-Test backend memakai `node --test` (kategori dan urutan deadline, endpoint tugas dan AI, provider LLM dengan provider tiruan, penyajian frontend, konfigurasi production). Test frontend memeriksa format sisa waktu. Tidak ada test yang memanggil layanan AI sungguhan. Build frontend: `npm --prefix frontend run build`.
+Test backend memakai `node --test` (kategori dan urutan deadline, autentikasi, endpoint tugas dan AI, provider LLM dengan provider tiruan, penyajian frontend, konfigurasi production). Test frontend memeriksa format sisa waktu. Tidak ada test yang memanggil layanan AI sungguhan. Build frontend: `npm --prefix frontend run build`.
 
 ### 5. Akun Demo
 
@@ -142,7 +142,7 @@ Tanggal pada data seed mengikuti dokumen, sehingga di aplikasi semuanya tampil s
 
 ## Ringkasan API
 
-Semua endpoint di bawah `/api`. Endpoint bertanda "Ya" membutuhkan header `Authorization: Bearer <token>`.
+Semua endpoint di bawah `/api`. Endpoint bertanda "Ya" membutuhkan header `Authorization: Bearer <token>`. Token ditolak dengan `401` bila akun pemiliknya sudah tidak ada (mis. `db.json` kembali ke seed) atau emailnya berbeda; login ulang diperlukan.
 
 | Method | Path | Login | Keterangan |
 | --- | --- | --- | --- |
@@ -156,8 +156,8 @@ Semua endpoint di bawah `/api`. Endpoint bertanda "Ya" membutuhkan header `Autho
 | `DELETE` | `/courses/:id` | Ya | Hapus mata kuliah beserta tugasnya |
 | `GET` | `/tasks` | Ya | Daftar seluruh tugas pengguna, lintas mata kuliah, dengan `kategori` dan `sisa_menit`, sudah terurut |
 | `GET` | `/tasks/:id` | Ya | Detail satu tugas |
-| `POST` | `/tasks` | Ya | Tambah tugas (`mata_kuliah_id`, `judul`, `deadline`, `deskripsi?`) |
-| `PUT` | `/tasks/:id` | Ya | Ubah tugas, termasuk status |
+| `POST` | `/tasks` | Ya | Tambah tugas (`mata_kuliah_id`, `judul`, `deadline`, `deskripsi?`); `400` bila `deadline` tidak bisa dibaca |
+| `PUT` | `/tasks/:id` | Ya | Ubah tugas, termasuk status; `400` bila `deadline` yang dikirim tidak bisa dibaca |
 | `DELETE` | `/tasks/:id` | Ya | Hapus tugas |
 | `POST` | `/ai/prioritas` | Ya | Saran urutan belajar untuk tugas mendekati dan terlambat |
 | `POST` | `/dev/reset` | Tidak | Reset data ke seed (hanya di luar production) |
@@ -194,7 +194,7 @@ Tanpa body. Server sendiri memilih tugas milik pengguna yang `kategori`-nya `men
 - `429` bila pengguna yang sama memanggil lagi dalam 10 detik (batas laju).
 - `500` untuk kegagalan internal; isi error tidak dikirim ke klien dan batas laju dilepas.
 
-Pesan error dan kunci API provider tidak pernah dikirim ke klien. Hanya field tugas (judul, mata kuliah, kategori, sisa waktu) yang dikirim ke provider AI, bukan data profil.
+Pesan error dan kunci API provider tidak pernah dikirim ke klien. Hanya field tugas (judul, mata kuliah, `deskripsi`, kategori, sisa waktu) yang dikirim ke provider AI, bukan data profil. `deskripsi` dipotong 200 karakter, sama seperti judul dan mata kuliah. Kegagalan provider dicatat di log server hanya dengan nama provider dan pesan error, tanpa kunci API, isi permintaan, maupun isi respons.
 
 ## Aturan Kategori Deadline
 
